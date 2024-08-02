@@ -1,0 +1,115 @@
+/* Estilos generales */
+body {
+    font-family:'Gotham';
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Gris claro */
+}
+@font-face {
+    font-family:  'Gotham';
+    src: url('fonts/gotham-light-webfont.woff2') format('woff2'),
+         url('fonts/gotham-light-webfont.woff') format('woff'),
+         url('fonts/gotham-light-webfont.svg#gothamlight') format('svg');
+         font-weight: 1700;
+         font-style: normal;
+
+
+   }
+  
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.left-section {
+    flex: 1;
+    max-width: 300px;
+}
+
+.right-section {
+    flex: 2;
+    margin-left: 20px;
+}
+
+h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #0055a4; /* Azul Hubbell */
+}
+
+p {
+    margin: 5px 0;
+}
+
+/* Estilos para tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff; /* Blanco */
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2; /* Gris claro */
+}
+
+/* Estilos para botones */
+button {
+    background-color: #0055a4; /* Azul Hubbell */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #003366; /* Azul oscuro Hubbell */
+}
+
+/* Estilos para formularios */
+form {
+    margin-top: 20px;
+}
+
+input[type="text"],
+input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+                background-color: #ffcc00;
+
+}
+
+/* Estilos para los botones de acción */
+.action-buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.action-buttons button {
+    margin-right: 10px;
+}
+
+/* Estilos responsivos */
+@media only screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .right-section {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+}

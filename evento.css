@@ -1,0 +1,317 @@
+/* Estilo CSS para la página de eventos con colores de Hubbell */
+
+body {
+    font-family: 'Gotham';
+    margin: 0;
+    padding: 0;
+    background-color: #f3f3f3; /* Gris claro */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+@font-face {
+    font-family:  'Gotham';
+    src: url('fonts/gotham-light-webfont.woff2') format('woff2'),
+         url('fonts/gotham-light-webfont.woff') format('woff'),
+         url('fonts/gotham-light-webfont.svg#gothamlight') format('svg');
+         font-weight: 1700;
+         font-style: normal;
+
+
+   }
+   .right-section {
+    position: relative; /* Asegura que el botón se posicione relativo a esta sección */
+    padding: 20px; /* Ajusta el espaciado si es necesario */
+}
+
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px; /* Mantiene el botón en la parte superior izquierda de la sección */
+    background-color: #000; /* Fondo negro */
+    color: white; /* Letras blancas */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s, color 0.3s; /* Añadido para animar el cambio de color */
+}
+
+.back-button i {
+    margin-right: 8px;
+}
+
+.back-button:hover {
+    background-color: #f4d900; /* Fondo amarillo al pasar el cursor */
+    color: black; /* Letras negras al pasar el cursor */
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    height: 100%;
+}
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    max-width: 100px;
+    height: auto;
+}
+.left-section {
+    flex: 1;
+    background-color: #000000; /* Negro */
+    color: #f8f8f4; /* Blanco */
+    padding: 20px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.left-section::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0; /* Cambiado a la derecha */
+    width: 15px; /* Grosor de la franja amarilla */
+    height: 100%;
+    background-color: #f4d900; /* Amarillo */
+}
+.user-info {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-top: auto;
+}
+.right-section {
+    flex: 3;
+    background-color: #f3f3f3; /* Blanco */
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+
+h2 {
+    margin-bottom: 20px;
+    color: #ffffff; /* Blanco */
+}
+
+h3 {
+    color: #000000; /* Negro */
+}
+
+
+
+
+
+.logout-form {
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #f4d900; /* Amarillo */
+    color: #000000; /* Negro */
+}
+
+.user-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button.user-button {
+    width: 50%;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #f4d900; /* Amarillo */
+    color: #000000; /* Negro */
+    border: 1px solid #000000;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 20px; /* Empuja este botón hacia la parte inferior */
+}
+button.user-button:hover {
+    width: 50%;
+    padding: 10px;
+    font-size: 14px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    background-color: #3a3a3a; /* Negro */
+    color: #f4d900; /* Amarillo */
+    border: 1px solid #000000;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.event-form-container {
+    display: none;
+    max-width: 600px;
+    padding: 20px;
+    background-color: #f3f3f3; /* Gris claro */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.event-form-container h3 {
+    color: #000000; /* Negro */
+}
+
+.event-form-container label {
+    display: block;
+    margin-bottom: 5px;
+    color: #000000; /* Negro */
+}
+
+.event-form-container input,
+.event-form-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.show-event-form {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #000000; /* Negro */
+    color: #f4d900; /* Amarillo */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.show-event-form:hover {
+    background-color: #f4d900; /* Amarillo */
+    color: #000000; /* Negro */
+}
+button{
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #000000; /* Negro */
+    color: #f4d900; /* Amarillo */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.toggle-images:hover {
+    background-color: #f4d900; /* Amarillo */
+    color: #000000; /* Negro */
+}
+.event-image {
+    width: 100%;
+    max-width: 300px;
+}
+
+.non-admin-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    max-width: 800px;
+    
+    margin: auto;
+}
+
+.non-admin-slider img {
+    max-width: 100%;
+    height: auto;
+    display: none;
+}
+
+.non-admin-slider .active {
+    display: block;
+}
+
+.admin-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.admin-buttons button {
+    padding: 5px 10px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.admin-buttons button:hover {
+    background-color: #c0392b;
+}
+
+.admin-images-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-images-container .event-container {
+    flex: 0 0 calc(33.333% - 10px);
+    box-sizing: border-box;
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 1200px) {
+    .button-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .logo img {
+        max-width: 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .button-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    button {
+        font-size: 14px;
+        padding: 15px;
+    }
+
+    button.user-button {
+        padding: 8px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .button-grid {
+        grid-template-columns: 1fr;
+    }
+    .logo img {
+        max-width: 60px;
+    }
+    button {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    button.user-button {
+        padding: 6px;
+        font-size: 10px;
+    }
+}

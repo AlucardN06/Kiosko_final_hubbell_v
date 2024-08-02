@@ -1,0 +1,256 @@
+/* Estilo CSS para la página de vacantes */
+
+body {
+    font-family: 'Gotham';
+    margin: 0;
+    padding: 0;
+    background-color: #f3f3f3; /* Gris claro */
+    color: #000000; /* Negro */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+@font-face {
+    font-family:  'Gotham';
+    src: url('fonts/gotham-light-webfont.woff2') format('woff2'),
+         url('fonts/gotham-light-webfont.woff') format('woff'),
+         url('fonts/gotham-light-webfont.svg#gothamlight') format('svg');
+         font-weight: 1700;
+         font-style: normal;
+
+
+   }
+  
+.container {
+    display: flex;
+    flex: 1;
+    height: 100%;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    max-width: 100px;
+    height: auto;
+}
+.left-section {
+    flex: 1;
+    background-color: #000000; /* Negro */
+    color: #f8f8f4; /* Blanco */
+    padding: 20px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.left-section::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0; /* Cambiado a la derecha */
+    width: 15px; /* Grosor de la franja amarilla */
+    height: 100%;
+    background-color: #f4d900; /* Amarillo */
+}
+.left-section h2 {
+    margin-top: 0;
+}
+
+.right-section {
+    flex: 3;
+    background-color: #ffffff; /* Blanco */
+    padding: 20px;
+    overflow: auto;
+}
+.right-section {
+    position: relative; /* Asegura que el botón se posicione relativo a esta sección */
+    padding: 20px; /* Ajusta el espaciado si es necesario */
+}
+
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px; /* Mantiene el botón en la parte superior izquierda de la sección */
+    background-color: #000; /* Fondo negro */
+    color: white; /* Letras blancas */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s, color 0.3s; /* Añadido para animar el cambio de color */
+}
+
+.right-section h3 {
+    margin-top: 0;
+}
+
+.vacancy-form-container {
+    display: none;
+}
+
+.vacancy-item {
+    border: 1px solid #dddddd;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.vacancy-item h4 {
+    margin-top: 0;
+}
+
+.show-vacancy-form, .show-update-form, button[type="submit"] {
+    background-color: #f4d900; /* Amarillo */
+    color: #000000; /* Negro */
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-family: 'Gotham';
+
+}
+
+.show-vacancy-form:hover, .show-update-form:hover, button[type="submit"]:hover {
+    background-color: #000000; /* Negro */
+    color: #f4d900; /* Amarillo */
+}
+
+.show-vacancy-form {
+    margin-bottom: 20px;
+}
+
+.recomen{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+.user-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    font-family: 'Gotham';
+
+}
+button.recomen{
+        text-align: center;
+        width: 19.2%;
+        padding: 10px;
+        font-size: 14px;
+        background-color: #f4d900; /* Amarillo */
+        color: #121212; /* Negro */
+        border: 1px solid #000000;
+        border-radius: 25px;
+        cursor: pointer;
+        margin-top: 20px; /* Empuja este botón hacia la parte inferior */
+        font-family:'Gotham';
+
+}
+.recomen_container{
+    display:flex; /* Usar flexbox para alinear botones en una fila */
+    justify-content: center; /* Centrar los botones horizontalmente */
+    gap: 10px; /* Espacio entre los botones */
+    text-align: center;
+}
+button.recomen:hover{
+    text-align: center;
+    width: 19.2%;
+    padding: 10px;
+    font-size: 14px;
+    font-family:'Gotham';
+    background-color: #000000; /* Negro */
+    color: #f4d900; /* Amarillo */
+    border: 1px solid #000000;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+button.user-button {
+    width: 50%;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #f4d900; /* Amarillo */
+    color: #000000; /* Negro */
+    border: 1px solid #000000;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 20px; /* Empuja este botón hacia la parte inferior */
+    font-family: 'Gotham';
+
+}
+button.user-button:hover {
+    width: 50%;
+    padding: 10px;
+    font-size: 14px;
+    font-family: 'Gotham';
+    background-color: #3a3a3a; /* Negro */
+    color: #f4d900; /* Amarillo */
+    border: 1px solid #000000;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+/* Media Queries para Responsividad */
+@media (max-width: 1200px) {
+    .button-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .logo img {
+        max-width: 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .button-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    button {
+        font-size: 14px;
+        padding: 15px;
+    }
+
+    button.user-button {
+        padding: 8px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .button-grid {
+        grid-template-columns: 1fr;
+    }
+    .logo img {
+        max-width: 60px;
+    }
+    button {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    button.user-button {
+        padding: 6px;
+        font-size: 10px;
+    }
+}
+

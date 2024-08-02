@@ -1,0 +1,755 @@
+A mi código le quitaste el formulario de inserción de datos por parte de los supervisores este es el código que tengo:<?php
+session_start();
+
+// Conexión a la base de datos
+$host = 'localhost';
+$user = 'id19951970_root';
+$password = 'Root#0123';
+$database = 'id19951970_localhost';
+
+$conn = mysqli_connect($host, $user, $password, $database);
+
+if (!$conn) {
+    die("Error de conexión: " . mysqli_connect_error());
+}
+
+// Procesamiento del formulario de aprobación/rechazo por parte de los administradores
+if (isset($_POST['approve_request']) || isset($_POST['confirm_reject'])) {
+    $request_id = $_POST['request_id'];
+    $admin_id = $_SESSION['user_id'];
+    $status = isset($_POST['approve_request']) ? 'Aprobado' : 'Rechazado';
+    $reason = isset($_POST['reject_reason']) ? $_POST['reject_reason'] : null;
+    $proposal_date = $_POST['proposal_date']; // Nuevo: Obtener la fecha de propuesta
+
+    // Verificar si ya se ha tomado una decisión para esta propuesta
+    $check_query = "SELECT * FROM approvals WHERE proposal_id = '$request_id' AND admin_id = '$admin_id'";
+    $check_result = mysqli_query($conn, $check_query);
+
+    if ($check_result && mysqli_num_rows($check_result) == 0) {
+        // Insertar la decisión en la tabla de aprobaciones
+        $insert_query = "INSERT INTO approvals (proposal_id, admin_id, action, reject_reason, proposal_date) VALUES ('$request_id', '$admin_id', '$status', '$reason', '$proposal_date')";
+        $insert_result = mysqli_query($conn, $insert_query);
+
+        if (!$insert_result) {
+            die("Error al insertar la aprobación/rechazo: " . mysqli_error($conn));
+        }
+
+        // Verificar si al menos 3 administradores han aprobado la propuesta
+        $count_query = "SELECT COUNT(*) AS approval_count FROM approvals WHERE proposal_id = '$request_id' AND action = 'Aprobado'";
+        $count_result = mysqli_query($conn, $count_query);
+        $count_row = mysqli_fetch_assoc($count_result);
+
+        if ($count_row['approval_count'] >= 3) {
+            // Actualizar el estado de la propuesta a 'Aprobado por Administradores'
+            $update_query = "UPDATE extra_time_proposals SET status = 'Aprobado por Administradores' WHERE id = '$request_id'";
+            mysqli_query($conn, $update_query);
+
+            // Guardar los administradores que aprobaron la propuesta
+            $admin_query = "SELECT admin_id FROM approvals WHERE proposal_id = '$request_id' AND action = 'Aprobado'";
+            $admin_result = mysqli_query($conn, $admin_query);
+            $admin_ids = [];
+            while ($admin_row = mysqli_fetch_assoc($admin_result)) {
+                $admin_ids[] = $admin_row['admin_id'];
+            }
+        }
+
+        // Verificar si la propuesta ha sido rechazada por algún administrador
+        $reject_query = "SELECT COUNT(*) AS reject_count FROM approvals WHERE proposal_id = '$request_id' AND action = 'Rechazado'";
+        $reject_result = mysqli_query($conn, $reject_query);
+        $reject_row = mysqli_fetch_assoc($reject_result);
+
+        if ($reject_row['reject_count'] > 0) {
+            // Actualizar el estado de la propuesta a 'Rechazado'
+            $update_query = "UPDATE extra_time_proposals SET status = 'Rechazado' WHERE id = '$request_id'";
+            mysqli_query($conn, $update_query);
+        }
+    }
+}
+
+// Procesamiento del formulario para agregar operadores
+if (isset($_POST['add_operator'])) {
+    $supervisor_id = $_SESSION['user_id'];
+    $employee_username = $_POST['employee_username'];
+    $schedule = $_POST['schedule'];
+    $proposal_date = $_POST['proposal_date'];
+
+    // Verificar que la fecha sea futura
+    $current_date = date('Y-m-d');
+    if ($proposal_date <= $current_date) {
+        die("La fecha de la propuesta debe ser una fecha futura.");
+    }
+
+    // Obtener información del empleado usando el username (número de reloj)
+    $employee_query = "SELECT id, firstname, lastname, area, plant, colony,username FROM users WHERE username = '$employee_username'";
+    $employee_result = mysqli_query($conn, $employee_query);
+
+    if ($employee_result && mysqli_num_rows($employee_result) > 0) {
+        $employee_row = mysqli_fetch_assoc($employee_result);
+        $employee_id = $employee_row['id'];
+        $employee_firstname = $employee_row['firstname'];
+        $employee_lastname = $employee_row['lastname'];
+        $employee_area = $employee_row['area'];
+        $employee_plant = $employee_row['plant'];
+        $employee_colony = $employee_row['colony'];
+        $employee_username = $employee_row['username'];
+
+        // Obtener el nombre del supervisor
+        $supervisor_query = "SELECT firstname, lastname FROM users WHERE id = '$supervisor_id'";
+        $supervisor_result = mysqli_query($conn, $supervisor_query);
+        $supervisor_row = mysqli_fetch_assoc($supervisor_result);
+        $supervisor_firstname = $supervisor_row['firstname'];
+        $supervisor_lastname = $supervisor_row['lastname'];
+
+        // Insertar operador en la tabla operators
+        $insert_operator_query = "INSERT INTO operators (employee_id, supervisor_id, supervisor_firstname, supervisor_lastname,username, firstname, lastname, area, plant, colony, proposal_date, schedule) VALUES ('$employee_id', '$supervisor_id', '$supervisor_firstname', '$supervisor_lastname','$employee_username', '$employee_firstname', '$employee_lastname', '$employee_area', '$employee_plant', '$employee_colony', '$proposal_date', '$schedule')";
+        $insert_operator_result = mysqli_query($conn, $insert_operator_query);
+
+        if (!$insert_operator_result) {
+            die("Error al insertar el operador: " . mysqli_error($conn));
+        }
+    } else {
+        die("No se encontró un empleado con el número de reloj proporcionado.");
+    }
+}
+
+// Procesamiento de la solicitud para eliminar operadores
+if (isset($_POST['delete_operator'])) {
+    $operator_id = $_POST['operator_id'];
+
+    // Verificar que el usuario tenga permiso para eliminar el registro
+    $user_id = $_SESSION['user_id'];
+    $user_position = $user['position'];
+
+    // Eliminar el operador de la tabla
+    $delete_query = "DELETE FROM operators WHERE id = '$operator_id'";
+    $delete_result = mysqli_query($conn, $delete_query);
+
+    if (!$delete_result) {
+        die("Error al eliminar el operador: " . mysqli_error($conn));
+    }
+}
+
+// Procesamiento de la solicitud para eliminar toda la tabla de operadores para una fecha específica
+if (isset($_POST['delete_all_operators_btn'])) {
+    $proposal_date = $_POST['delete_all_operators'];
+
+    // Eliminar todos los operadores asociados con la fecha especificada
+    $delete_all_query = "DELETE FROM operators WHERE proposal_date = '$proposal_date'";
+    $delete_all_result = mysqli_query($conn, $delete_all_query);
+
+    if (!$delete_all_result) {
+        die("Error al eliminar la tabla de operadores: " . mysqli_error($conn));
+    }
+}
+
+// Obtener información del usuario si está en sesión
+$user = null;
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    $query = "SELECT firstname, lastname, position, area, plant FROM users WHERE id = '$user_id'";
+    $result = mysqli_query($conn, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $user = mysqli_fetch_assoc($result);
+    } else {
+        die("Error al obtener datos del usuario");
+    }
+}
+
+// Consulta las propuestas de tiempo extra para administrativos
+$requests_result = null;
+if ($user && $user['position'] == 'Administrativo') {
+    // Obtener propuestas agrupadas por fecha y supervisor desde la tabla operators
+    $query = "SELECT proposal_date, supervisor_id FROM operators GROUP BY proposal_date, supervisor_id";
+    $requests_result = mysqli_query($conn, $query);
+}
+
+// Consulta las propuestas de tiempo extra creadas por el supervisor
+$supervisor_proposals_result = null;
+if ($user && $user['position'] == 'Supervisor') {
+    $supervisor_id = $_SESSION['user_id'];
+    $query = "SELECT proposal_date FROM operators WHERE supervisor_id = '$supervisor_id' GROUP BY proposal_date";
+    $supervisor_proposals_result = mysqli_query($conn, $query);
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .proposal-table {
+            display: none;
+        }
+        .action-buttons {
+            margin-top: 10px;
+        }
+        .reject-reason {
+            display: none;
+        }
+        .confirm-reject-btn {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-section user-info">
+            <?php if ($user) : ?>
+                <h2>Bienvenido, <?php echo htmlspecialchars($user['firstname'] . ' ' . $user['lastname']); ?></h2>
+                <p>Área: <?php echo htmlspecialchars($user['area']); ?></p>
+                <p>Puesto: <?php echo htmlspecialchars($user['position']); ?></p>
+                <p>Número de planta: <?php echo htmlspecialchars($user['plant']); ?></p>
+                <form action="inicio.php" method="POST">
+                    <button type="submit" class="logout-button"> Regresar</button>
+                </form>
+                <br>
+                <form action="index.php" method="POST">
+                    <button type="submit" name="logout" class="logout-button">Cerrar sesión</button>
+                </form>
+            <?php endif; ?>
+        </div>
+        <div class="right-section">
+            <?php if ($user && $user['position'] == 'Administrativo') : ?>
+                <!-- Mostrar propuestas de tiempo extra -->
+                <h3>Propuestas de Tiempo Extra</h3>
+                <?php if ($requests_result && mysqli_num_rows($requests_result) > 0) : ?>
+                    <?php while ($row = mysqli_fetch_assoc($requests_result)) : ?>
+                        <button class="toggle-table">Mostrar Propuestas del <?php echo htmlspecialchars($row['proposal_date']); ?> - Supervisor <?php echo htmlspecialchars($row['supervisor_id']); ?></button>
+                        <table class="proposal-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre del Supervisor</th>
+                                    <th>Apellido del Supervisor</th>
+                                    <th>Numero de reloj del empledo</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Área</th>
+                                    <th>Planta</th>
+                                    <th>Colonia</th>
+                                    <th>Horario</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $date = $row['proposal_date'];
+                                $supervisor_id = $row['supervisor_id'];
+                                $details_query = "SELECT * FROM operators WHERE proposal_date = '$date' AND supervisor_id = '$supervisor_id'";
+                                $details_result = mysqli_query($conn, $details_query);
+                                while ($detail_row = mysqli_fetch_assoc($details_result)) : ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars ($detail_row['supervisor_firstname']); ?></td>
+                                        <td><?php echo htmlspecialchars ($detail_row['supervisor_lastname']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['username']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['firstname']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['lastname']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['area']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['plant']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['colony']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['schedule']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['proposal_date']); ?></td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                        <form action="dashboard.php" method="POST">
+                            <input type="hidden" name="delete_all_operators" value="<?php echo $row['proposal_date']; ?>">
+                            <button type="submit" name="delete_all_operators_btn" class="delete-all-btn">Eliminar Tabla Completa</button>
+                        </form>
+                        <div class="action-buttons">
+                            <form action="dashboard.php" method="POST">
+                                <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($row['proposal_date'] . '-' . $row['supervisor_id']); ?>">
+                                <input type="hidden" name="proposal_date" value="<?php echo htmlspecialchars($row['proposal_date']); ?>"> <!-- Nuevo: Enviar la fecha de propuesta -->
+                                <button type="submit" name="approve_request" class="approve-btn" onclick="return confirm('¿Estás seguro de aprobar esta propuesta?')">Aprobar</button>
+                                <button type="button" class="reject-btn" onclick="confirmReject()">Rechazar</button>
+                                <textarea name="reject_reason" id="reject_reason" placeholder="Motivo de rechazo" class="reject-reason"></textarea>
+                                <button type="submit" name="confirm_reject" id="confirm_reject_btn" class="confirm-reject-btn" style="display: none;">Confirmar Rechazo</button>
+                            </form>
+                            <button onclick="downloadTableAsCSV('<?php echo $row['proposal_date'] . '-' . $row['supervisor_id']; ?>')" class="download-btn">Descargar como CSV</button>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else : ?>
+                    <p>No hay propuestas de tiempo extra pendientes.</p>
+                <?php endif; ?>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <script>
+        // Función para mostrar/ocultar tabla de propuestas
+        document.querySelectorAll('.toggle-table').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const table = btn.nextElementSibling;
+                table.style.display = table.style.display === 'none' ? 'table' : 'none';
+            });
+        });
+
+        // Función para mostrar área de motivo de rechazo y botón de confirmación de rechazo
+        function confirmReject() {
+            const rejectReason = document.querySelector('.reject-reason');
+            const confirmRejectBtn = document.querySelector('.confirm-reject-btn');
+
+            rejectReason.style.display = rejectReason.style.display === 'none' ? 'block' : 'none';
+            confirmRejectBtn.style.display = confirmRejectBtn.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Función para descargar tabla como CSV
+        function downloadTableAsCSV(tableId) {
+            const table = document.querySelector(`[name="${tableId}"]`);
+            const csvRows = [];
+            const headers = [];
+            for (const header of table.querySelectorAll('th')) {
+                headers.push(header.innerText);
+            }
+            csvRows.push(headers.join(','));
+            for (const row of table.querySelectorAll('tbody tr')) {
+                const csvRow = [];
+                for (const cell of row.querySelectorAll('td')) {
+                    csvRow.push(cell.innerText);
+                }
+                csvRows.push(csvRow.join(','));
+            }
+            const csvData = csvRows.join('\n');
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `${tableId}.csv`);
+            a.click();
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+pt2:
+<?php
+session_start();
+
+// Conexión a la base de datos
+$host = 'localhost';
+$user = 'id19951970_root';
+$password = 'Root#0123';
+$database = 'id19951970_localhost';
+
+$conn = mysqli_connect($host, $user, $password, $database);
+
+if (!$conn) {
+    die("Error de conexión: " . mysqli_connect_error());
+}
+
+// Procesamiento del formulario de aprobación/rechazo por parte de los administradores
+if (isset($_POST['approve_request']) || isset($_POST['confirm_reject'])) {
+    $request_id = $_POST['request_id'];
+    $admin_id = $_SESSION['user_id'];
+    $status = isset($_POST['approve_request']) ? 'Aprobado' : 'Rechazado';
+    $reason = isset($_POST['reject_reason']) ? $_POST['reject_reason'] : null;
+
+    // Verificar si ya se ha tomado una decisión para esta propuesta
+    $check_query = "SELECT * FROM approvals WHERE proposal_id = '$request_id' AND admin_id = '$admin_id'";
+    $check_result = mysqli_query($conn, $check_query);
+
+    if ($check_result && mysqli_num_rows($check_result) == 0) {
+        // Insertar la decisión en la tabla de aprobaciones
+        $insert_query = "INSERT INTO approvals (proposal_id, admin_id, action, reject_reason) VALUES ('$request_id', '$admin_id', '$status', '$reason')";
+        $insert_result = mysqli_query($conn, $insert_query);
+
+        if (!$insert_result) {
+            die("Error al insertar la aprobación/rechazo: " . mysqli_error($conn));
+        }
+
+        // Verificar si al menos 3 administradores han aprobado la propuesta
+        $count_query = "SELECT COUNT(*) AS approval_count FROM approvals WHERE proposal_id = '$request_id' AND action = 'Aprobado'";
+        $count_result = mysqli_query($conn, $count_query);
+        $count_row = mysqli_fetch_assoc($count_result);
+
+        if ($count_row['approval_count'] >= 3) {
+            // Actualizar el estado de la propuesta a 'Aprobado por Administradores'
+            $update_query = "UPDATE extra_time_proposals SET status = 'Aprobado por Administradores' WHERE id = '$request_id'";
+            mysqli_query($conn, $update_query);
+
+            // Guardar los administradores que aprobaron la propuesta
+            $admin_query = "SELECT admin_id FROM approvals WHERE proposal_id = '$request_id' AND action = 'Aprobado'";
+            $admin_result = mysqli_query($conn, $admin_query);
+            $admin_ids = [];
+            while ($admin_row = mysqli_fetch_assoc($admin_result)) {
+                $admin_ids[] = $admin_row['admin_id'];
+            }
+
+           // Insertar en la tabla de aprobados
+$insert_approved_query = "INSERT INTO approved_proposals (proposal_id, admin_ids, proposal_date) 
+    SELECT '$request_id', '" . implode(',', $admin_ids) . "', proposal_date FROM operators WHERE proposal_date = '$date' AND supervisor_id = '$supervisor_id'";
+mysqli_query($conn, $insert_approved_query);
+
+
+
+            // Insertar información en la tabla approved_proposal_info
+            $insert_approved_info_query = "INSERT INTO approved_proposal_info (proposal_id, supervisor_id, supervisor_firstname, supervisor_lastname, employee_id, employee_firstname, employee_lastname, employee_area, employee_plant, employee_colony, proposal_date, schedule) 
+            SELECT 
+                proposal_id, 
+                supervisor_id, 
+                supervisor_firstname, 
+                supervisor_lastname, 
+                employee_id, 
+                firstname, 
+                lastname, 
+                area, 
+                plant, 
+                colony, 
+                proposal_date, 
+                schedule 
+            FROM 
+                operators 
+            WHERE 
+                proposal_date = '$date' AND supervisor_id = '$supervisor_id'";
+
+            mysqli_query($conn, $insert_approved_info_query);
+        }
+
+        // Verificar si la propuesta ha sido rechazada por algún administrador
+        $reject_query = "SELECT COUNT(*) AS reject_count FROM approvals WHERE proposal_id = '$request_id' AND action = 'Rechazado'";
+        $reject_result = mysqli_query($conn, $reject_query);
+        $reject_row = mysqli_fetch_assoc($reject_result);
+
+        if ($reject_row['reject_count'] > 0) {
+            // Actualizar el estado de la propuesta a 'Rechazado'
+            $update_query = "UPDATE extra_time_proposals SET status = 'Rechazado' WHERE id = '$request_id'";
+            mysqli_query($conn, $update_query);
+        }
+    }
+}
+
+// Procesamiento del formulario para agregar operadores
+if (isset($_POST['add_operator'])) {
+    $supervisor_id = $_SESSION['user_id'];
+    $employee_username = $_POST['employee_username'];
+    $schedule = $_POST['schedule'];
+    $proposal_date = $_POST['proposal_date'];
+
+    // Verificar que la fecha sea futura
+    $current_date = date('Y-m-d');
+    if ($proposal_date <= $current_date) {
+        die("La fecha de la propuesta debe ser una fecha futura.");
+    }
+
+    // Obtener información del empleado usando el username (número de reloj)
+    $employee_query = "SELECT id, firstname, lastname, area, plant, colony,username FROM users WHERE username = '$employee_username'";
+    $employee_result = mysqli_query($conn, $employee_query);
+
+    if ($employee_result && mysqli_num_rows($employee_result) > 0) {
+        $employee_row = mysqli_fetch_assoc($employee_result);
+        $employee_id = $employee_row['id'];
+        $employee_firstname = $employee_row['firstname'];
+        $employee_lastname = $employee_row['lastname'];
+        $employee_area = $employee_row['area'];
+        $employee_plant = $employee_row['plant'];
+        $employee_colony = $employee_row['colony'];
+        $employee_username = $employee_row['username'];
+
+        // Obtener el nombre del supervisor
+        $supervisor_query = "SELECT firstname, lastname FROM users WHERE id = '$supervisor_id'";
+        $supervisor_result = mysqli_query($conn, $supervisor_query);
+        $supervisor_row = mysqli_fetch_assoc($supervisor_result);
+        $supervisor_firstname = $supervisor_row['firstname'];
+        $supervisor_lastname = $supervisor_row['lastname'];
+
+        // Insertar operador en la tabla operators
+        $insert_operator_query = "INSERT INTO operators (employee_id, supervisor_id, supervisor_firstname, supervisor_lastname,username, firstname, lastname, area, plant, colony, proposal_date, schedule) VALUES ('$employee_id', '$supervisor_id', '$supervisor_firstname', '$supervisor_lastname','$employee_username', '$employee_firstname', '$employee_lastname', '$employee_area', '$employee_plant', '$employee_colony', '$proposal_date', '$schedule')";
+        $insert_operator_result = mysqli_query($conn, $insert_operator_query);
+
+        if (!$insert_operator_result) {
+            die("Error al insertar el operador: " . mysqli_error($conn));
+        }
+    } else {
+        die("No se encontró un empleado con el número de reloj proporcionado.");
+    }
+}
+
+// Procesamiento de la solicitud para eliminar operadores
+if (isset($_POST['delete_operator'])) {
+    $operator_id = $_POST['operator_id'];
+
+    // Verificar que el usuario tenga permiso para eliminar el registro
+    $user_id = $_SESSION['user_id'];
+    $user_position = $user['position'];
+
+
+        // Eliminar el operador de la tabla
+        $delete_query = "DELETE FROM operators WHERE id = '$operator_id'";
+        $delete_result = mysqli_query($conn, $delete_query);
+
+        if (!$delete_result) {
+            die("Error al eliminar el operador: " . mysqli_error($conn));
+        }
+
+}
+// Procesamiento de la solicitud para eliminar toda la tabla de operadores para una fecha específica
+if (isset($_POST['delete_all_operators_btn'])) {
+    $proposal_date = $_POST['delete_all_operators'];
+
+    // Eliminar todos los operadores asociados con la fecha especificada
+    $delete_all_query = "DELETE FROM operators WHERE proposal_date = '$proposal_date'";
+    $delete_all_result = mysqli_query($conn, $delete_all_query);
+
+    if (!$delete_all_result) {
+        die("Error al eliminar la tabla de operadores: " . mysqli_error($conn));
+    }
+}
+
+// Obtener información del usuario si está en sesión
+$user = null;
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    $query = "SELECT firstname, lastname, position, area, plant FROM users WHERE id = '$user_id'";
+    $result = mysqli_query($conn, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $user = mysqli_fetch_assoc($result);
+    } else {
+        die("Error al obtener datos del usuario");
+    }
+}
+
+// Consulta las propuestas de tiempo extra para administrativos
+$requests_result = null;
+if ($user && $user['position'] == 'Administrativo') {
+    // Obtener propuestas agrupadas por fecha y supervisor desde la tabla operators
+    $query = "SELECT proposal_date, supervisor_id FROM operators GROUP BY proposal_date, supervisor_id";
+    $requests_result = mysqli_query($conn, $query);
+}
+
+// Consulta las propuestas de tiempo extra creadas por el supervisor
+$supervisor_proposals_result = null;
+if ($user && $user['position'] == 'Supervisor') {
+    $supervisor_id = $_SESSION['user_id'];
+    $query = "SELECT proposal_date FROM operators WHERE supervisor_id = '$supervisor_id' GROUP BY proposal_date";
+    $supervisor_proposals_result = mysqli_query($conn, $query);
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .proposal-table {
+            display: none;
+        }
+        .action-buttons {
+            margin-top: 10px;
+        }
+        .reject-reason {
+            display: none;
+        }
+        .confirm-reject-btn {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-section user-info">
+            <?php if ($user) : ?>
+                <h2>Bienvenido, <?php echo htmlspecialchars($user['firstname'] . ' ' . $user['lastname']); ?></h2>
+                <p>Área: <?php echo htmlspecialchars($user['area']); ?></p>
+                <p>Puesto: <?php echo htmlspecialchars($user['position']); ?></p>
+                <p>Número de planta: <?php echo htmlspecialchars($user['plant']); ?></p>
+                <form action="inicio.php" method="POST">
+                <button type="submit" class="logout-button"> Regresar</button>
+                </form>
+                <br>
+                <form action="index.php" method="POST">
+                    <button type="submit" name="logout" class="logout-button">Cerrar sesión</button>
+                </form>
+            <?php endif; ?>
+        </div>
+        <div class="right-section">
+            <?php if ($user && $user['position'] == 'Administrativo') : ?>
+                <!-- Mostrar propuestas de tiempo extra -->
+                <h3>Propuestas de Tiempo Extra</h3>
+                <?php if ($requests_result && mysqli_num_rows($requests_result) > 0) : ?>
+                    <?php while ($row = mysqli_fetch_assoc($requests_result)) : ?>
+                        <button class="toggle-table">Mostrar Propuestas del <?php echo htmlspecialchars($row['proposal_date']); ?> - Supervisor <?php echo htmlspecialchars($row['supervisor_id']); ?></button>
+                        <table class="proposal-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre del Supervisor </th>
+                                    <th>Apellido del Supervisor</th>
+                                    <th>Numero de reloj del empledo</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Área</th>
+                                    <th>Planta</th>
+                                    <th>Colonia</th>
+                                    <th>Horario</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $date = $row['proposal_date'];
+                                $supervisor_id = $row['supervisor_id'];
+                                $details_query = "SELECT * FROM operators WHERE proposal_date = '$date' AND supervisor_id = '$supervisor_id'";
+                                $details_result = mysqli_query($conn, $details_query);
+                                while ($detail_row = mysqli_fetch_assoc($details_result)) : ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars ($detail_row['supervisor_firstname']); ?></td>
+                                            <td><?php echo htmlspecialchars ($detail_row['supervisor_lastname']); ?></td>
+                                            <td><?php echo htmlspecialchars($detail_row['username']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['firstname']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['lastname']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['area']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['plant']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['colony']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['schedule']); ?></td>
+                                        <td><?php echo htmlspecialchars($detail_row['proposal_date']); ?></td>
+                                    </tr>
+
+
+                                <?php endwhile; ?>
+                            </tbody>
+                            
+                        </table>
+                        <form action="dashboard.php" method="POST">
+    <input type="hidden" name="delete_all_operators" value="<?php echo $proposal_date; ?>">
+    <button type="submit" name="delete_all_operators_btn" class="delete-all-btn">Eliminar Tabla Completa</button>
+</form>
+
+                        <div class="action-buttons">
+                            <form action="dashboard.php" method="POST">
+                                <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($row['proposal_date'] . '-' . $row['supervisor_id']); ?>">
+                                <button type="submit" name="approve_request" class="approve-btn">Aprobar</button>
+                                <button type="button" class="reject-btn">Rechazar</button>
+                                <textarea name="reject_reason" placeholder="Motivo de rechazo" class="reject-reason"></textarea>
+                                <button type="submit" name="confirm_reject" class="confirm-reject-btn">Confirmar Rechazo</button>
+                            </form>
+                            
+
+
+                            <button onclick="downloadTableAsExcel(this)">Descargar Excel</button>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else : ?>
+                    <p>No hay propuestas de tiempo extra.</p>
+                <?php endif; ?>
+
+
+
+            <?php elseif ($user && $user['position'] == 'Supervisor') : ?>
+                <!-- Formulario para agregar operadores -->
+                <h3>Agregar Operador</h3>
+                <form action="dashboard.php" method="POST" class="add-operator-form">
+                    <label for="employee_username">Número de Reloj del Operador:</label>
+                    <input type="text" id="employee_username" name="employee_username" required>
+                    <label for="schedule">Horario:</label>
+                    <input type="text" id="schedule" name="schedule" required>
+                    <label for="proposal_date">Fecha de Propuesta:</label>
+                    <input type="date" id="proposal_date" name="proposal_date" required>
+                    <button type="submit" name="add_operator">Agregar Operador</button>
+                </form>
+            <?php endif; ?>
+
+            <?php if ($supervisor_proposals_result && mysqli_num_rows($supervisor_proposals_result) > 0) : ?>
+                <!-- Mostrar propuestas del supervisor -->
+                <h3>Tus Propuestas de Tiempo Extra</h3>
+                <?php while ($proposal_row = mysqli_fetch_assoc($supervisor_proposals_result)) : ?>
+                    <button class="toggle-table">Mostrar Propuestas del <?php echo htmlspecialchars($proposal_row['proposal_date']); ?></button>
+                    <table class="proposal-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre del Supervisor</th>
+                                <th>Apellido del Supervisor</th>
+                                <th>Numero de reloj del empleado</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Área</th>
+                                <th>Planta</th>
+                                <th>Colonia</th>
+                                <th>Horario</th>
+                                <th>Fecha</th>
+                                <th> Eliminar empleado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $date = $proposal_row['proposal_date'];
+                            $supervisor_id = $_SESSION['user_id'];
+                            $details_query = "SELECT * FROM operators WHERE proposal_date = '$date' AND supervisor_id = '$supervisor_id'";
+                            $details_result = mysqli_query($conn, $details_query);
+                            while ($detail_row = mysqli_fetch_assoc($details_result)) : ?>
+                                <tr>
+                                        <td><?php echo htmlspecialchars ($detail_row['supervisor_firstname']); ?></td>
+                                            <td><?php echo htmlspecialchars ($detail_row['supervisor_lastname']); ?></td>
+                                             <td><?php echo htmlspecialchars($detail_row['username']); ?></td>
+                                    <td><?php echo htmlspecialchars($detail_row['firstname']); ?></td>
+                                    <td><?php echo htmlspecialchars($detail_row['lastname']); ?></td>
+                                    <td><?php echo htmlspecialchars($detail_row['area']); ?></td>
+                                    <td><?php echo htmlspecialchars($detail_row['plant']); ?></td>
+                                    <td><?php echo htmlspecialchars($detail_row['colony']); ?></td>
+                                    <td><?php echo htmlspecialchars($detail_row['schedule']); ?></td>
+                                    <td><?php echo htmlspecialchars($detail_row['proposal_date']); ?></td>
+                                    <td> <form action="dashboard.php" method="POST">
+                                <input type="hidden" name="operator_id" value="<?php echo $detail_row['id']; ?>">
+                                <button type="submit" name="delete_operator" class="delete-btn">Eliminar</button>
+                            </form></td>
+                            
+                                </tr>
+                                
+                            <?php endwhile; ?>
+                            
+                        </tbody>
+                    </table>
+                    <!-- Botón para eliminar toda la tabla -->
+<form action="dashboard.php" method="POST">
+    <input type="hidden" name="delete_all_operators" value="<?php echo $proposal_row['proposal_date']; ?>">
+    <button type="submit" name="delete_all_operators_btn" class="delete-all-btn">Eliminar Tabla Completa</button>
+</form>
+
+                <?php endwhile; ?>
+            <?php endif; ?>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButtons = document.querySelectorAll('.toggle-table');
+                function toggleTable(button) {
+        var table = button.parentElement.nextElementSibling.querySelector('.proposal-table');
+        if (table.style.display === 'none') {
+            table.style.display = 'table';
+        } else {
+            table.style.display = 'none';
+        }
+                });
+            });
+
+            const rejectButtons = document.querySelectorAll('.reject-btn');
+            const rejectReasons = document.querySelectorAll('.reject-reason');
+            const confirmRejectButtons = document.querySelectorAll('.confirm-reject-btn');
+
+            rejectButtons.forEach((button, index) => {
+                button.addEventListener('click', function () {
+                    rejectReasons[index].style.display = 'block';
+                    confirmRejectButtons[index].style.display = 'inline-block';
+                });
+            });
+        });
+
+        function downloadTableAsExcel(button) {
+            const table = button.closest('.action-buttons').previousElementSibling;
+            const wb = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
+            XLSX.writeFile(wb, 'propuesta_tiempo_extra.xlsx');
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+</body>
+</html>

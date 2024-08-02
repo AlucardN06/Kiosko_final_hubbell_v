@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertir Datos en Hash</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 50px;
+        }
+        input, textarea, button {
+            margin: 10px;
+            padding: 10px;
+            width: 300px;
+        }
+        textarea {
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Convertir Datos en Hash</h1>
+    <input type="text" id="data" placeholder="Ingresa datos">
+    <button onclick="convertirHash()">Convertir a Hash</button>
+    <textarea id="hashResult" placeholder="Resultado del Hash" readonly></textarea>
+
+    <script>
+        function convertirHash() {
+            var data = document.getElementById('data').value;
+            var hash = CryptoJS.SHA256(data);
+            document.getElementById('hashResult').value = hash;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+body {
+    font-family: 'Gotham';
+    background: url('images/Fondo.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+@font-face {
+    font-family:  'Gotham';
+    src: url('fonts/gotham-light-webfont.woff2') format('woff2'),
+         url('fonts/gotham-light-webfont.woff') format('woff'),
+         url('fonts/gotham-light-webfont.svg#gothamlight') format('svg');
+         font-weight: 1700;
+         font-style: normal;
+
+
+   }
+  
+   .login-form {
+    margin-bottom: 20px; /* Añade espacio debajo del formulario */
+}
+.login-form {
+    margin-bottom: 20px; /* Espacio debajo del formulario */
+}
+
+.forgot-password {
+    display: block;
+    margin-top: 20px; /* Espacio encima del enlace */
+    color: white; /* Color de texto blanco */
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.forgot-password:hover {
+    color: #000; /* Color de texto negro en el hover */
+    background-color: #f4d900; /* Color de fondo en el hover */
+    padding: 5px;
+    border-radius: 3px;
+}
+
+
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    max-width: 100px;
+    height: auto;
+}
+.parr{
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #ede9e9;
+}
+
+.container {
+    max-width: 400px;
+    width: 100%;
+    background-color: rgba(24, 23, 23, 0.9);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(248, 244, 244, 0.1);
+    text-align: center;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #ede9e9;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input[type="text"],
+input[type="password"]
+{
+  
+        width: calc(70% - 20px);
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 35px;
+        font-size: 16px;
+    
+}
+button {
+    width: calc(50% - 20px);
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 35px;
+    font-size: 16px;
+}
+
+input[type="text"],
+input[type="password"] {
+    border: 1px solid #f4D900;
+    text-align: center;
+}
+
+button {
+    background-color: #f4D900;
+    color: #000000;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #000000;
+    color: #f4D900;
+}
+
+.error-msg,
+.success-msg {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.error-msg {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.success-msg {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Responsiveness */
+
+@media screen and (max-width: 600px) {
+    .container {
+        width: 90%;
+        margin: 0 5%;
+    }
+
+    .logo img {
+        max-width: 80px;
+    }
+}
+/* Línea amarilla en la parte inferior */
+.bottom-line {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 25px;
+    background-color: #f4D900;
+}
+
+@media screen and (max-width: 400px) {
+    input[type="text"],
+    input[type="password"],
+    button {
+        font-size: 14px;
+    }
+
+    .logo img {
+        max-width: 60px;
+    }
+}

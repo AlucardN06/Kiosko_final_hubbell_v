@@ -1,0 +1,157 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.container {
+    padding: 20px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: #000;
+}
+
+/* Form Styles */
+form {
+    display: inline-block;
+    margin: 10px;
+}
+
+input[type="date"],
+input[type="number"],
+button {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #0fa533; /* Color verde */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0c7d2a; /* Color verde más oscuro al pasar el ratón */
+}
+
+button[type="submit"] {
+    background-color: #000;
+    color: #fff;
+}
+
+button[type="submit"]:hover {
+    background-color: #e0d9d9;
+    color: #000;
+}
+
+/* Table Styles */
+.table-container {
+    overflow-x: auto;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #000;
+    color: #fff;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+.table-container h3 {
+    margin: 0;
+    padding: 10px;
+    background-color: #ffc107;
+    color: #000;
+    text-align: center;
+}
+
+/* Button Container */
+.button-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .container,
+    .table-container {
+        padding: 10px;
+    }
+
+    table, th, td {
+        font-size: 14px;
+    }
+
+    button {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+
+.logo-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+}
+
+.logo-container img {
+    width: 15vw; /* Cambiar a una unidad relativa al ancho de la pantalla */
+}
+
+/* Resto de estilos... */
+
+@media screen and (max-width: 600px) {
+    form {
+        width: 80%;
+    }
+
+    .logo-container {
+        top: 10px; /* Ajustar la posición del logo */
+        left: 10px;
+    }
+
+    .logo-container img {
+        width: 25vw; /* Ajustar el tamaño del logo para pantallas más pequeñas */
+    }
+
+    h1 {
+        margin-top: 80px; /* Agregar margen superior al título para evitar que el logo lo tape */
+    }
+}

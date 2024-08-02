@@ -1,0 +1,366 @@
+body {
+    font-family: 'Gotham', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f3f3f3; /* Fondo amarillo claro */
+    color: #000000; /* Texto negro */
+    height: 100vh; /* Alto completo de la ventana */
+    display: flex;
+    flex-direction: column;
+}
+
+@font-face {
+    font-family:  'Gotham';
+    src: url('fonts/gotham-light-webfont.woff2') format('woff2'),
+         url('fonts/gotham-light-webfont.woff') format('woff'),
+         url('fonts/gotham-light-webfont.svg#gothamlight') format('svg');
+         font-weight: 1700;
+         font-style: normal;
+
+
+
+
+}
+
+/* Resto de tu CSS */
+.icon-large {
+    position: relative;
+    font-size: 24px; /* Tamaño del ícono */
+}
+
+.envio {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    margin: 10px auto;
+    color: #fff;
+    background-color: #000;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    font-family: 'Gotham', sans-serif;
+}
+
+.icon-combined span {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.icon-combined .fa-check {
+    color: green; /* Puedes cambiar el color si es necesario */
+    top: -8px; /* Ajusta este valor según sea necesario */
+    left: 8px; /* Ajusta este valor según sea necesario */
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    font-family: 'Gotham';
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    max-width: 100px; /* Tamaño máximo del logo */
+    height: auto;
+}
+
+.left-section {
+    flex: 1;
+    background-color: #000000; /* Fondo negro */
+    color: #f8f8f4; /* Texto blanco */
+    padding: 20px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    height: 100vh; /* Alto completo de la ventana */
+    overflow-y: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.left-section::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0; /* Alineado a la derecha */
+    width: 15px; /* Grosor de la franja amarilla */
+    height: 100%;
+    background-color: #f4d900; /* Franja amarilla */
+}
+
+.user-info {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-top: auto;
+}
+
+.right-section {
+    flex: 3;
+    background-color: #f3f3f3; /* Fondo blanco */
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    text-align: center; /* Centrado de contenido */
+}
+.right-section {
+    position: relative; /* Asegura que el botón se posicione relativo a esta sección */
+    padding: 20px; /* Ajusta el espaciado si es necesario */
+}
+
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px; /* Mantiene el botón en la parte superior izquierda de la sección */
+    background-color: #000; /* Fondo negro */
+    color: white; /* Letras blancas */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s, color 0.3s; /* Añadido para animar el cambio de color */
+}
+
+.back-button i {
+    margin-right: 8px;
+}
+
+.back-button:hover {
+    background-color: #f4d900; /* Fondo amarillo al pasar el cursor */
+    color: black; /* Letras negras al pasar el cursor */
+}
+
+h2 {
+    margin-bottom: 30px;
+    color: #ffffff; /* Texto blanco */
+}
+
+.b_ol {
+    color: #000;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+    height: 80%; /* Ocupa todo el alto de right-section */
+}
+
+.button-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* Espacio alrededor de los botones */
+    gap: 10px; /* Espacio entre los botones */
+    max-width: 900px; /* Ancho máximo para evitar que los botones se extiendan demasiado */
+    margin: 0 auto; /* Centrado horizontal */
+}
+
+.button-grid button {
+    flex: 1 1 calc(30% - 10px); /* Ancho de cada botón con espacio entre ellos */
+    margin-bottom: 20px; /* Espacio debajo de cada botón */
+    padding: 35px; /* Ajusta el padding para hacer los botones más pequeños */
+    background-color: #000000; /* Fondo negro */
+    color: #f4d900; /* Texto amarillo */
+    border: 4px solid #f4d900; /* Borde amarillo */
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer;
+    font-size: 26px; /* Tamaño de la fuente */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Gotham', sans-serif;
+}
+
+.button-grid button:hover {
+    background-color: #f4d900; /* Fondo amarillo al pasar el mouse */
+    color: #000000; /* Texto negro */
+    border: 4px solid #000000; /* Borde amarillo */
+}
+
+.user-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button.user-button {
+    width: 50%;
+    padding: 10px; /* Aumenta el padding para hacer el botón más grande */
+    font-size: 14px; /* Aumenta el tamaño de la fuente */
+    background-color: #f4d900; /* Fondo amarillo */
+    color: #000000; /* Texto negro */
+    border: 1px solid #000000;
+    border-radius: 25px; /* Bordes redondeados */
+    cursor: pointer;
+    font-family: 'Gotham', sans-serif;
+    margin-top: 20px; /* Margen superior */
+}
+
+button.user-button:hover {
+    background-color: #3a3a3a; /* Fondo negro al pasar el mouse */
+    color: #f4d900; /* Texto amarillo */
+    border: 1px solid #000000;
+}
+
+@media (max-width: 1200px) {
+    .button-grid {
+        gap: 15px; /* Reducir el espacio entre los botones */
+    }
+
+    body {
+        font-family: 'Gotham', sans-serif;
+    }
+
+    .button-grid button {
+        flex: 1 1 calc(45% - 5px); /* Ajustar ancho de los botones */
+        margin-bottom: 10px; /* Reducir el margen inferior de los botones */
+        padding: 20px; /* Reducir el padding de los botones */
+        font-size: 16px; /* Reducir el tamaño de la fuente */
+        background-color: #f4d900;
+    }
+
+    .logo img {
+        max-width: 80px; /* Reducir tamaño del logo */
+    }
+
+    .department-title {
+        margin-top: 10%; /* Ajustar margen superior del título */
+        margin-bottom: 5%; /* Reducir margen inferior del título */
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center; /* Centrado horizontal */
+        align-items: center; /* Centrado vertical */
+        height: 90%; /* Ocupa todo el alto de right-section */
+    }
+}
+
+@media (max-width: 768px) {
+    .button-grid {
+        flex-direction: column;
+        gap: 15px; /* Reducir el espacio entre los botones */
+    }
+
+    body {
+        font-family: 'Gotham', sans-serif;
+        background-color: #f4d900;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center; /* Centrado horizontal */
+        align-items: center; /* Centrado vertical */
+        height: 80%; /* Ocupa todo el alto de right-section */
+    }
+
+    .button-grid button {
+        flex: 1 1 calc(30% - 10px); /* Ancho de cada botón con espacio entre ellos */
+        margin-bottom: 40px; /* Espacio debajo de cada botón */
+        padding: 35px; /* Ajusta el padding para hacer los botones más pequeños */
+        background-color: #000000; /* Fondo negro */
+        color: #f4d900; /* Texto amarillo */
+        border: 4px solid #f4d900; /* Borde amarillo */
+        border-radius: 8px; /* Bordes redondeados */
+        cursor: pointer;
+        font-size: 18px; /* Tamaño de la fuente */
+        transition: background-color 0.3s ease, color 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .icon-large {
+        font-size: 24px; /* Reducir tamaño de iconos */
+    }
+
+    .department-title {
+        margin-top: 8%; /* Aumenta el margen superior en pantallas más pequeñas */
+        margin-bottom: 4%; /* Aumenta el margen inferior en pantallas más pequeñas */
+    }
+
+    .left-section {
+        position: static; /* Para mejorar la visualización en pantallas pequeñas */
+        height: auto; /* Ajustar el alto para pantallas pequeñas */
+    }
+
+    .container {
+        flex-direction: column; /* Ajustar para que las secciones se apilen en pantallas pequeñas */
+    }
+
+    .right-section {
+        flex: 1;
+    }
+
+    .user-buttons button {
+        width: 100%; /* Ajustar ancho de botones de usuario */
+    }
+}
+
+@media (max-width: 1440px) and (orientation: landscape) {
+    body {
+        font-family: 'Gotham', sans-serif;
+    }
+
+    .button-grid {
+        gap: 50px; /* Reducir el espacio entre los botones */
+    }
+
+    .button-grid button {
+        flex: 1 1 calc(30% - 5px); /* Ajustar ancho de los botones */
+        margin-bottom: -25px; /* Reducir el margen inferior de los botones */
+        padding: 25px; /* Reducir el padding de los botones */
+        font-size: 24px; /* Reducir el tamaño de la fuente */
+    }
+
+    .department-title {
+        margin-top: 20%; /* Ajustar margen superior del título */
+        margin-bottom: 5%; /* Reducir margen inferior del título */
+    }
+
+    .left-section::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0; /* Alineado a la derecha */
+        width: 15px; /* Grosor de la franja amarilla */
+        height: 100%;
+        background-color: #f4d900; /* Franja amarilla */
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center; /* Centrado horizontal */
+        align-items: center; /* Centrado vertical */
+        height: 80%; /* Ocupa todo el alto de right-section */
+    }
+}
+
+.icon-large {
+    font-size: 80px; /* Tamaño grande para los iconos */
+}
+
+.department-title {
+    text-align: center;
+    margin-top: 4%; /* Ajusta la distancia del título respecto a los botones */
+    margin-bottom: 2%; /* Espacio abajo del título */
+    color: #000000; /* Color de texto negro */
+}

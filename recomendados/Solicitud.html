@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Solicitudes de Empleo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: grid;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario de Solicitudes de Empleo</h1>
+        <form action="procesar_solicitud.php" method="POST">
+            <label for="trabajo_previo">Trabajo Previo:</label>
+            <input type="text" id="trabajo_previo" name="trabajo_previo"><br>
+
+            <label for="fecha_baja">Fecha de Baja:</label>
+            <input type="date" id="fecha_baja" name="fecha_baja"><br>
+
+            <label for="apellido_paterno">Apellido Paterno:</label>
+            <input type="text" id="apellido_paterno" name="apellido_paterno" required><br>
+
+            <label for="apellido_materno">Apellido Materno:</label>
+            <input type="text" id="apellido_materno" name="apellido_materno" required><br>
+
+            <label for="nombres">Nombres:</label>
+            <input type="text" id="nombres" name="nombres" required><br>
+
+            <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento"><br>
+
+            <label for="curp">CURP:</label>
+            <input type="text" id="curp" name="curp"><br>
+
+            <label for="rfc">RFC:</label>
+            <input type="text" id="rfc" name="rfc"><br>
+
+            <label for="seguro_social">Número de Seguro Social:</label>
+            <input type="text" id="seguro_social" name="seguro_social"><br>
+
+            <label for="codigo_postal">Código Postal:</label>
+            <input type="text" id="codigo_postal" name="codigo_postal"><br>
+
+            <label for="genero">Género:</label>
+            <select id="genero" name="genero">
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+            </select><br>
+
+            <label for="estado_civil">Estado Civil:</label>
+            <select id="estado_civil" name="estado_civil">
+                <option value="Soltero(a)">Soltero(a)</option>
+                <option value="Casado(a)">Casado(a)</option>
+                <option value="Viudo(a)">Viudo(a)</option>
+                <option value="Divorciado(a)">Divorciado(a)</option>
+                <option value="Unión Libre">Unión Libre</option>
+            </select><br>
+
+            <label for="idioma_preferido">Idioma Preferido:</label>
+            <input type="text" id="idioma_preferido" name="idioma_preferido"><br>
+
+            <label for="numero_hijos">Número de Hijos:</label>
+            <input type="number" id="numero_hijos" name="numero_hijos" min="0"><br>
+
+            <label for="lugar_nacimiento_ciudad">Ciudad de Nacimiento:</label>
+            <input type="text" id="lugar_nacimiento_ciudad" name="lugar_nacimiento_ciudad"><br>
+
+            <label for="lugar_nacimiento_estado">Estado de Nacimiento:</label>
+            <input type="text" id="lugar_nacimiento_estado" name="lugar_nacimiento_estado"><br>
+
+            <label for="lugar_nacimiento_pais">País de Nacimiento:</label>
+            <input type="text" id="lugar_nacimiento_pais" name="lugar_nacimiento_pais"><br>
+
+            <label for="clinica_imss">Clínica IMSS:</label>
+            <input type="text" id="clinica_imss" name="clinica_imss"><br>
+
+            <label for="correo_electronico">Correo Electrónico:</label>
+            <input type="email" id="correo_electronico" name="correo_electronico"><br>
+
+            <label for="telefono_celular1">Teléfono Celular 1:</label>
+            <input type="tel" id="telefono_celular1" name="telefono_celular1"><br>
+
+            <label for="telefono_celular2">Teléfono Celular 2:</label>
+            <input type="tel" id="telefono_celular2" name="telefono_celular2"><br>
+
+            <label for="direccion_calle">Calle:</label>
+            <input type="text" id="direccion_calle" name="direccion_calle"><br>
+
+            <label for="direccion_numero_exterior">Número Exterior:</label>
+            <input type="text" id="direccion_numero_exterior" name="direccion_numero_exterior"><br>
+
+            <label for="direccion_numero_interior">Número Interior:</label>
+            <input type="text" id="direccion_numero_interior" name="direccion_numero_interior"><br>
+
+            <label for="direccion_colonia">Colonia:</label>
+            <input type="text" id="direccion_colonia" name="direccion_colonia"><br>
+
+            <label for="direccion_ciudad">Ciudad:</label>
+            <input type="text" id="direccion_ciudad" name="direccion_ciudad"><br>
+
+            <label for="direccion_estado">Estado:</label>
+            <input type="text" id="direccion_estado" name="direccion_estado"><br>
+
+            <label for="direccion_codigo_postal">Código Postal de Domicilio:</label>
+            <input type="text" id="direccion_codigo_postal" name="direccion_codigo_postal"><br>
+
+            <label for="nivel_estudios">Nivel de Estudios:</label>
+            <select id="nivel_estudios" name="nivel_estudios">
+                <option value="Primaria">Primaria</option>
+                <option value="Secundaria">Secundaria</option>
+                <option value="Preparatoria">Preparatoria</option>
+                <option value="Licenciatura">Licenciatura</option>
+                <option value="Maestría">Maestría</option>
+                <option value="Doctorado">Doctorado</option>
+            </select><br>
+
+            <label for="visibilidad">Visibilidad de la Información:</label>
+            <select id="visibilidad" name="visibilidad">
+                <option value="Pública">Pública</option>
+                <option value="Privada">Privada</option>
+            </select><br>
+
+            <label for="documento_nivel_estudios">Documento del Nivel de Estudios:</label>
+            <input type="file" id="documento_nivel_estudios" name="documento_nivel_estudios"><br>
+
+            <label for="contacto_emergencia1_nombre">Nombre de Contacto de Emergencia 1:</label>
+            <input type="text" id="contacto_emergencia1_nombre" name="contacto_emergencia1_nombre"><br>
+
+            <label for="contacto_emergencia1_telefono">Teléfono de Contacto de Emergencia 1:</label>
+            <input type="tel" id="contacto_emergencia1_telefono" name="contacto_emergencia1_telefono"><br>
+
+            <label for="contacto_emergencia1_parentesco">Parentesco de Contacto de Emergencia 1:</label>
+            <select id="contacto_emergencia1_parentesco" name="contacto_emergencia1_parentesco">
+                <option value="Hijo">Hijo</option>
+                <option value="Amigo">Amigo</option>
+                <option value="Padre/madre">Padre/madre</option>
+                <option value="Hermano/a">Hermano/a</option>
+                <option value="Esposo(a)">Esposo(a)</option>
+                <option value="Otro">Otro</option>
+            </select><br>
+
+            <label for="contacto_emergencia1_email">Correo Electrónico de Contacto de Emergencia 1:</label>
+            <input type="email" id="contacto_emergencia1_email" name="contacto_emergencia1_email"><br>
+
+            <label for="contacto_emergencia2_nombre">Nombre de Contacto de Emergencia 2:</label>
+            <input type="text" id="contacto_emergencia2_nombre" name="contacto_emergencia2_nombre"><br>
+
+            <label for="contacto_emergencia2_telefono">Teléfono de Contacto de Emergencia 2:</label>
+            <input type="tel" id="contacto_emergencia2_telefono" name="contacto_emergencia2_telefono"><br>
+
+            <label for="contacto_emergencia2_parentesco">Parentesco de Contacto de Emergencia 2:</label>
+            <select id="contacto_emergencia2_parentesco" name="contacto_emergencia2_parentesco">
+                <option value="Hijo">Hijo</option>
+                <option value="Amigo">Amigo</option>
+                <option value="Padre/madre">Padre/madre</option>
+                <option value="Hermano/a">Hermano/a</option>
+                <option value="Esposo(a)">Esposo(a)</option>
+                <option value="Otro">Otro</option>
+            </select><br>
+
+            <label for="contacto_emergencia2_email">Correo Electrónico de Contacto de Emergencia 2:</label>
+            <input type="email" id="contacto_emergencia2_email" name="contacto_emergencia2_email"><br>
+
+            <label for="declaracion_ajuste_verdad">Declaración de Ajuste a la Verdad:</label>
+            <textarea id="declaracion_ajuste_verdad" name="declaracion_ajuste_verdad" rows="4"></textarea><br>
+
+            <label for="nombre_solicitante">Nombre del Solicitante:</label>
+            <input type="text" id="nombre_solicitante" name="nombre_solicitante"><br>
+
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
+</body>
+</html>

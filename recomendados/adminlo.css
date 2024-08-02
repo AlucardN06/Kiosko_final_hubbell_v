@@ -1,0 +1,86 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('Images/Fondo.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 80vh;
+    margin: 0;
+    padding: 0;
+    color: #000;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 50px;
+    color: #f2eded;
+}
+
+form {
+    max-width: 400px;
+    margin: 0 auto; /* Centra el formulario horizontalmente */
+    margin-top: 180px; /* Espacio entre el título y el formulario */
+    background-color: rgba(45, 43, 43, 0.9);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #eceaea;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #000;
+    color: #ffd100;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #333;
+}
+
+.logo-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+}
+
+.logo-container img {
+    width: 15vw; /* Cambiar a una unidad relativa al ancho de la pantalla */
+}
+
+/* Resto de estilos... */
+
+@media screen and (max-width: 600px) {
+    form {
+        width: 80%;
+    }
+
+    .logo-container {
+        top: 20px;
+        left: 20px;
+    }
+
+    .logo-container img {
+        width: 25vw; /* Ajustar el tamaño del logo para pantallas más pequeñas */
+    }
+}

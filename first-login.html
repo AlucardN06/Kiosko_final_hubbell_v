@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Login</title>
+    <link rel="stylesheet" href="first-login.css">
+</head>
+<body>
+    <h1>Change Password</h1>
+    <form id="first-login-form">
+        <input type="password" id="new-password" placeholder="New Password" required>
+        <button type="submit">Change Password</button>
+    </form>
+
+    <script>
+        document.getElementById('first-login-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const newPassword = document.getElementById('new-password').value;
+            const token = localStorage.getItem('token');
+
+            const response = await fetch('/first-login', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+                body: JSON.stringify({ newPassword })
+            });
+
+            if (response.ok) {
+                alert('Password updated successfully');
+                window.location.href = '/dashboard.php';
+            } else {
+                alert('Password update failed');
+            }
+        });
+    </script>
+</body>
+</html>

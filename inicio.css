@@ -1,0 +1,194 @@
+body {
+    font-family: 'Gotham';
+    margin: 0;
+    padding: 0;
+    /* Cambiar el fondo a la imagen */
+    background: url('images/Fondo3.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    color: #f3f3f3; /* Blanco */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+@font-face {
+    font-family:  'Gotham';
+    src: url('fonts/gotham-light-webfont.woff2') format('woff2'),
+         url('fonts/gotham-light-webfont.woff') format('woff'),
+         url('fonts/gotham-light-webfont.svg#gothamlight') format('svg');
+         font-weight: 1700;
+         font-style: normal;
+
+
+   }
+  
+
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    max-width: 100px;
+    height: auto;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    height: 100%;
+}
+
+.left-section {
+    flex: 1;
+    background-color: #000000; /* Negro */
+    color: #f8f8f4; /* Blanco */
+    padding: 20px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.left-section::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0; /* Cambiado a la derecha */
+    width: 15px; /* Grosor de la franja amarilla */
+    height: 100%;
+    background-color: #f4d900; /* Amarillo */
+}
+
+.user-info {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-top: auto;
+}
+
+.right-section {
+    flex: 3;
+    background-color: #f3f3f3; /* Blanco */
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #f3f3f3; /* Blanco */
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+button {
+    padding: 20px;
+    background-color: #000000; /* Negro */
+    color: #f4d900; /* Amarillo */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #f4d900; /* Amarillo */
+    color: #000000; /* Negro */
+}
+
+/* Estilos específicos para los botones en la sección del usuario */
+.user-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    flex: 1;
+    justify-content: flex-start; /* Empuja los botones hacia la parte inferior */
+}
+
+button.user-button {
+    width: 50%;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #f4d900; /* Amarillo */
+    color: #000000; /* Negro */
+    border: 1px solid #000000;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 20px; /* Empuja este botón hacia la parte inferior */
+}
+
+button.user-button:hover {
+    width: 50%;
+    padding: 10px;
+    font-size: 14px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    background-color: #3a3a3a; /* Negro */
+    color: #f4d900; /* Amarillo */
+    border: 1px solid #000000;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1200px) {
+    .button-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .logo img {
+        max-width: 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .button-grid {
+        grid-template-columns: 1fr;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 15px;
+    }
+
+    button.user-button {
+        padding: 8px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .button-grid {
+        grid-template-columns: 1fr;
+    }
+
+    button {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    button.user-button {
+        padding: 6px;
+        font-size: 10px;
+    }
+
+    .logo img {
+        max-width: 60px;
+    }
+}

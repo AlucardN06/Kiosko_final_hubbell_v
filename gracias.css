@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    background: url('images/X.webp') no-repeat center center fixed;
+    background-size:contain; /* Ajusta el tamaño de la imagen para que quepa dentro del contenedor */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 180vh; /* Ajusta la altura del body según la pantalla */
+    margin: 0;
+    color: #f0f6f6;
+    background-color: #000;
+    padding: 20px;
+}
+
+.message-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: rgba(63, 61, 61, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.message-container h2 {
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.message-container p {
+    font-size: 18px;
+    color: #ffffff;
+    line-height: 1.5;
+}
+#map
+{
+    height:  500px;
+    width: 90%;
+}
+@media screen and (max-width: 640px) {
+    .message-container {
+        padding: 10px;
+    }
+
+    .message-container h2 {
+        font-size: 20px;
+    }
+
+    .message-container p {
+        font-size: 16px;
+    }
+}

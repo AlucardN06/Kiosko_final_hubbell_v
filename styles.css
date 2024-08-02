@@ -1,0 +1,100 @@
+/* styles.css */
+
+body {
+    font-family: 'Gotham';
+    background: url('images/Fondo.jpeg') no-repeat center center fixed;
+    background-size: cover;
+ 
+    margin: 0;
+}
+@font-face {
+    font-family:  'Gotham';
+    src: url('fonts/gotham-light-webfont.woff2') format('woff2'),
+         url('fonts/gotham-light-webfont.woff') format('woff'),
+         url('fonts/gotham-light-webfont.svg#gothamlight') format('svg');
+         font-weight: 1700;
+         font-style: normal;
+
+
+   }
+  
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: rgba(24, 23, 23, 0.9);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(248, 244, 244, 0.1);
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #fdf3f3;
+}
+p{
+    color:#fdf3f3;
+}
+input[type="text"],
+input[type="password"],
+button {
+    width: calc(100% - 22px); /* Ajuste para evitar que choquen con el borde */
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #0a0a0a;
+    border-radius: 5px;
+    font-size: 14px;
+
+}
+
+button {
+    background-color: #ffcc00;
+    color: #0c0c0c;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #000000;
+    color: #ffcc00;
+}
+
+.error-msg,
+.success-msg {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.error-msg {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.success-msg {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Responsiveness */
+
+@media screen and (max-width: 600px) {
+    .container {
+        width: 80%;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    button {
+        width: calc(100% - 20px); /* Ajuste adicional */
+    }
+    
+}
+
+@media screen and (max-width: 400px) {
+    input[type="text"],
+    input[type="password"],
+    button {
+        font-size: 14px;
+    }
+}
