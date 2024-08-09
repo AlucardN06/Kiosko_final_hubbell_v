@@ -37,6 +37,18 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
+if (isset($_POST['update_pendiente'])) {
+    $id = $_POST['id'];
+    $pendiente = $_POST['pendiente'];
+    $tabla = $_POST['tabla'];
+
+    $query = "UPDATE $tabla SET pendiente = '$pendiente' WHERE id = '$id'";
+    if (mysqli_query($conn, $query)) {
+        echo "<script>alert('El estado de pendiente ha sido actualizado.');</script>";
+    } else {
+        echo "<script>alert('Error al actualizar el estado de pendiente: " . mysqli_error($conn) . "');</script>";
+    }
+}
 
 
   // Procesar los formularios
@@ -98,14 +110,14 @@ if (isset($_POST['borrar_tabla'])) {
                     }
                     
                     if ($tipo === 'extravio') {
-                        $query = "INSERT INTO extravios_sodexo (numero_reloj, nombre, motivo) VALUES ('$numero_reloj', '$nombre', 'Vencimiento')";
+                        $query = "INSERT INTO extravios_sodexo (numero_reloj, nombre, motivo, pendiente) VALUES ('$numero_reloj', '$nombre', 'Vencimiento', 1)";
                         if (mysqli_query($conn, $query)) {
                             $_SESSION['message'] = "Preséntese en el área de RH en 15 dias para recoger su tarjeta sodexo.";
                         } else {
                             echo "<script>alert('Error al guardar los datos: " . mysqli_error($conn) . "');</script>";
                         }
                     } elseif ($tipo === 'reposicion') {
-                        $query = "INSERT INTO reposiciones_sodexo (numero_reloj, nombre,motivo) VALUES ('$numero_reloj', '$nombre','$motivo')";
+                        $query = "INSERT INTO reposiciones_sodexo (numero_reloj, nombre, motivo, pendiente) VALUES ('$numero_reloj', '$nombre', '$motivo', 1)";
                         if (mysqli_query($conn, $query)) {
                             $_SESSION['message'] = "Preséntese en RH en 15 dias para recoger su tarjeta sodexo.";
                         } else {
@@ -137,6 +149,7 @@ if (isset($_POST['logout'])) {
     header("Location: index.php");
     exit;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -308,6 +321,13 @@ if (isset($_POST['logout'])) {
                 }
             });
         });
+        function confirmarCambio(selectElement) {
+        if (confirm('¿Está seguro que desea cambiar el estado de pendiente? Esta acción no se puede deshacer.')) {
+            selectElement.form.submit();
+        } else {
+            selectElement.value = selectElement.defaultValue; // Revertir el valor del select
+        }
+    }
     </script>
 </head>
 <body>
@@ -385,79 +405,106 @@ if (isset($_POST['logout'])) {
             <?php if ($user && $user['position'] == 'A') : ?>
                 
 
-            <h1>Solicitudes de Tarjetas Sodexo Vencidas</h1>
-            <table id="extravios_sodexo_Table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Número de Reloj</th>
-                        <th>Nombre</th>
-                        <th>Motivo</th>
-                        <th>Fecha y Hora de la solicitud</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $query = "SELECT * FROM extravios_sodexo";
-                    $result = mysqli_query($conn, $query);
+                <h1>Solicitudes de Tarjetas Sodexo Vencidas</h1>
+<table id="extravios_sodexo_Table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Número de Reloj</th>
+            <th>Nombre</th>
+            <th>Motivo</th>
+            <th>Fecha y Hora de la solicitud</th>
+            <th>Pendiente</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $query = "SELECT * FROM extravios_sodexo";
+        $result = mysqli_query($conn, $query);
 
-                    if ($result && mysqli_num_rows($result) > 0) {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<tr>
-                                    <td>{$row['id']}</td>
-                                    <td>{$row['numero_reloj']}</td>
-                                    <td>{$row['nombre']}</td>
-                                    <td>{$row['motivo']}</td>
-                                    <td>{$row['fecha_hora']}</td>
-                                    <td><button class='envio'  onclick=\"confirmarBorradoFila('extravios_sodexo', {$row['id']})\">Borrar</button></td>
-                                  </tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='5'>No hay datos disponibles</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-            <button class="download-button" onclick="downloadExcel('extravios_sodexo_Table', 'extravios_sodexo.xlsx')">Descargar como Excel</button>
-            <button class="delete-button" onclick="confirmarBorrado('extravios_sodexo')">Borrar Todos los Datos</button>
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<tr>
+                        <td>{$row['id']}</td>
+                        <td>{$row['numero_reloj']}</td>
+                        <td>{$row['nombre']}</td>
+                        <td>{$row['motivo']}</td>
+                        <td>{$row['fecha_hora']}</td>
+                        <td>
+                            <form method='POST' action=''>
+                                <input type='hidden' name='id' value='{$row['id']}'>
+                                <input type='hidden' name='tabla' value='extravios_sodexo'>
+                             <select name='pendiente' onchange='confirmarCambio(this)'>
+                                  <option value='1'" . ($row['pendiente'] == 1 ? ' selected' : '') . ">Si</option>
+                                  <option value='0'" . ($row['pendiente'] == 0 ? ' selected' : '') . ">No</option>
+                             </select>
 
-            <h1>Solicitudes de Reposiciones de Tarjetas Sodexo</h1>
-            <table id="reposiciones_sodexo_Table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Número de Reloj</th>
-                        <th>Nombre</th>
-                        <th>Motivo</th>
-                        <th>Fecha y Hora de la solicitud</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $query = "SELECT * FROM reposiciones_sodexo";
-                    $result = mysqli_query($conn, $query);
+                                <input type='hidden' name='update_pendiente' value='1'>
+                            </form>
+                        </td>
+                        <td><button class='envio' onclick=\"confirmarBorradoFila('extravios_sodexo', {$row['id']})\">Borrar</button></td>
+                      </tr>";
+            }
+        } else {
+            echo "<tr><td colspan='6'>No hay datos disponibles</td></tr>";
+        }
+        ?>
+    </tbody>
+</table>
+<button class="download-button" onclick="downloadExcel('extravios_sodexo_Table', 'extravios_sodexo.xlsx')">Descargar como Excel</button>
+<button class="delete-button" onclick="confirmarBorrado('extravios_sodexo')">Borrar Todos los Datos</button>
 
-                    if ($result && mysqli_num_rows($result) > 0) {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<tr>
-                                    <td>{$row['id']}</td>
-                                    <td>{$row['numero_reloj']}</td>
-                                    <td>{$row['nombre']}</td>
-                                    <td>{$row['motivo']}</td>
-                                    <td>{$row['fecha_hora']}</td>
-                                    <td><button class='envio' onclick=\"confirmarBorradoFila('reposiciones_sodexo', {$row['id']})\">Borrar</button></td>
-                                  </tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='4'>No hay datos disponibles</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-            <button class="download-button" onclick="downloadExcel('reposiciones_sodexo_Table', 'reposiciones_sodexo.xlsx')">Descargar como Excel</button>
-            <button class="delete-button" onclick="confirmarBorrado('reposiciones_sodexo')">Borrar Todos los Datos</button>
+<h1>Solicitudes de Reposiciones de Tarjetas Sodexo</h1>
+<table id="reposiciones_sodexo_Table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Número de Reloj</th>
+            <th>Nombre</th>
+            <th>Motivo</th>
+            <th>Fecha y Hora de la solicitud</th>
+            <th>Pendiente</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $query = "SELECT * FROM reposiciones_sodexo";
+        $result = mysqli_query($conn, $query);
+
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<tr>
+                        <td>{$row['id']}</td>
+                        <td>{$row['numero_reloj']}</td>
+                        <td>{$row['nombre']}</td>
+                        <td>{$row['motivo']}</td>
+                        <td>{$row['fecha_hora']}</td>
+                        <td>
+                            <form method='POST' action=''>
+                                <input type='hidden' name='id' value='{$row['id']}'>
+                                <input type='hidden' name='tabla' value='reposiciones_sodexo'>
+                                <select name='pendiente' onchange='confirmarCambio(this)'>
+                                      <option value='1'" . ($row['pendiente'] == 1 ? ' selected' : '') . ">Si</option>
+                                      <option value='0'" . ($row['pendiente'] == 0 ? ' selected' : '') . ">No</option>
+                                </select>
+
+                                <input type='hidden' name='update_pendiente' value='1'>
+                            </form>
+                        </td>
+                        <td><button class='envio' onclick=\"confirmarBorradoFila('reposiciones_sodexo', {$row['id']})\">Borrar</button></td>
+                      </tr>";
+            }
+        } else {
+            echo "<tr><td colspan='6'>No hay datos disponibles</td></tr>";
+        }
+        ?>
+    </tbody>
+</table>
+<button class="download-button" onclick="downloadExcel('reposiciones_sodexo_Table', 'reposiciones_sodexo.xlsx')">Descargar como Excel</button>
+<button class="delete-button" onclick="confirmarBorrado('reposiciones_sodexo')">Borrar Todos los Datos</button>
+
         </div>
         <?php endif;?>
     </div>

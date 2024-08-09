@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
@@ -24,7 +23,7 @@ if (!$conn) {
 $user = null;
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
-    $query = "SELECT firstname, username,lastname, position, area, plant, birthdate FROM users WHERE id = '$user_id'";
+    $query = "SELECT firstname, username, lastname, position, area, plant, birthdate FROM users WHERE id = '$user_id'";
     $result = mysqli_query($conn, $query);
 
     if ($result && mysqli_num_rows($result) > 0) {
@@ -37,9 +36,23 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Actualizar el valor de la columna 'pendiente'
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_pendiente']) && isset($_POST['id']) && isset($_POST['pendiente'])) {
+    $id = $_POST['id'];
+    $tabla = $_POST['tabla'];
+    
+    // Convertir 'Si' o 'No' a valores numéricos
+    $pendiente = $_POST['pendiente'] === 'No' ? 1 : 0;
 
+    $query = "UPDATE $tabla SET pendiente = $pendiente WHERE id = '$id'";
+    if (mysqli_query($conn, $query)) {
+        echo "<script>alert('Actualización exitosa.');</script>";
+    } else {
+        echo "<script>alert('Error al actualizar: " . mysqli_error($conn) . "');</script>";
+    }
+}
 
-  // Procesar los formularios
+// Procesar otros formularios
 if (isset($_POST['borrar_tabla'])) {
     $tabla = $_POST['borrar_tabla'];
 
@@ -48,8 +61,7 @@ if (isset($_POST['borrar_tabla'])) {
     $check_result = mysqli_query($conn, $check_query);
 
     if (mysqli_num_rows($check_result) == 1) {
-        // Asegurar que la consulta de truncado esté asignada a la variable $query
-        $query = "TRUNCATE TABLE $tabla";  // Esta línea es la corrección
+        $query = "TRUNCATE TABLE $tabla";
 
         if (mysqli_query($conn, $query)) {
             echo "<script>alert('Todos los datos de la tabla $tabla han sido borrados.');</script>";
@@ -59,65 +71,65 @@ if (isset($_POST['borrar_tabla'])) {
     } else {
         echo "<script>alert('La tabla $tabla no existe.');</script>";
     }
-}  elseif (isset($_POST['borrar_fila'])) {
-            $tabla = $_POST['tabla'];
-            $id = $_POST['id'];
-            $query = "DELETE FROM $tabla WHERE id = $id";
-            if (mysqli_query($conn, $query)) {
-                echo "<script>alert('El registro ha sido borrado.');</script>";
-            } else {
-                echo "<script>alert('Error al borrar el registro: " . mysqli_error($conn) . "');</script>";
+} elseif (isset($_POST['borrar_fila'])) {
+    $tabla = $_POST['tabla'];
+    $id = $_POST['id'];
+    $query = "DELETE FROM $tabla WHERE id = $id";
+    if (mysqli_query($conn, $query)) {
+        echo "<script>alert('El registro ha sido borrado.');</script>";
+    } else {
+        echo "<script>alert('Error al borrar el registro: " . mysqli_error($conn) . "');</script>";
+    }
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $numero_reloj = $_POST['numero_reloj'];
+    $tipo = $_POST['tipo'];
+
+    // Verificar si el usuario tiene autorización tipo A o si el número de reloj coincide con su username
+    if ($user['position'] !== 'A' && $numero_reloj !== $user['username']) {
+        echo "<script>alert('No puede pedir el gafete de otra persona.');window.location.href = 'gafetes.php';</script>";
+    } else {
+        // Verificar si ya existe un registro de extravío o reposición para el número de reloj en el día actual
+        $today = date('Y-m-d');
+        $query = "SELECT id FROM extravios WHERE numero_reloj = '$numero_reloj' AND DATE(fecha_hora) = '$today'
+                  UNION
+                  SELECT id FROM reposiciones WHERE numero_reloj = '$numero_reloj' AND DATE(fecha_hora) = '$today'";
+        $result = mysqli_query($conn, $query);
+
+        if ($result && mysqli_num_rows($result) > 0) {
+            echo "<script>alert('Solo se permite un envío por día. Ya ha realizado una solicitud hoy.');window.location.href = 'gafetes.php';</script>";
+        } else {
+            // Obtener el nombre de la persona con el número de reloj
+            $query = "SELECT firstname, lastname FROM users WHERE username = '$numero_reloj'";
+            $result = mysqli_query($conn, $query);
+            $nombre = '';
+
+            if ($result && mysqli_num_rows($result) > 0) {
+                $row = mysqli_fetch_assoc($result);
+                $nombre = $row['firstname'] . ' ' . $row['lastname'];
             }
-        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $numero_reloj = $_POST['numero_reloj'];
-            $tipo = $_POST['tipo'];
-            
-            // Verificar si el usuario tiene autorización tipo A o si el número de reloj coincide con su username
-            if ($user['position'] !== 'A' && $numero_reloj !== $user['username']) {
-                echo "<script>alert('No puede pedir el gafete de otra persona.');window.location.href = 'gafetes.php';</script>";
-            } else {
-                // Verificar si ya existe un registro de extravío o reposición para el número de reloj en el día actual
-                $today = date('Y-m-d');
-                $query = "SELECT id FROM extravios WHERE numero_reloj = '$numero_reloj' AND DATE(fecha_hora) = '$today'
-                          UNION
-                          SELECT id FROM reposiciones WHERE numero_reloj = '$numero_reloj' AND DATE(fecha_hora) = '$today'";
-                $result = mysqli_query($conn, $query);
-                
-                if ($result && mysqli_num_rows($result) > 0) {
-                    echo "<script>alert('Solo se permite un envío por día. Ya ha realizado una solicitud hoy.');window.location.href = 'gafetes.php';</script>";
+            if ($tipo === 'extravio') {
+                $query = "INSERT INTO extravios (numero_reloj, nombre, costo, pendiente) VALUES ('$numero_reloj', '$nombre', 40.00, 1)";
+                if (mysqli_query($conn, $query)) {
+                    $_SESSION['message'] = "Se descontará la siguiente cantidad por la reposición del gafete extraviado: $40 pesos. Preséntese en el área de RH en 2 hrs.";
                 } else {
-                    // Obtener el nombre de la persona con el número de reloj
-                    $query = "SELECT firstname, lastname FROM users WHERE username = '$numero_reloj'";
-                    $result = mysqli_query($conn, $query);
-                    $nombre = '';
-                    
-                    if ($result && mysqli_num_rows($result) > 0) {
-                        $row = mysqli_fetch_assoc($result);
-                        $nombre = $row['firstname'] . ' ' . $row['lastname'];
-                    }
-                    
-                    if ($tipo === 'extravio') {
-                        $query = "INSERT INTO extravios (numero_reloj, nombre, costo) VALUES ('$numero_reloj', '$nombre', 40.00)";
-                        if (mysqli_query($conn, $query)) {
-                            $_SESSION['message'] = "Se descontará la siguiente cantidad por la reposición del gafete extraviado: $40 pesos. Preséntese en el área de RH en 2 hrs.";
-                        } else {
-                            echo "<script>alert('Error al guardar los datos: " . mysqli_error($conn) . "');</script>";
-                        }
-                    } elseif ($tipo === 'reposicion') {
-                        $query = "INSERT INTO reposiciones (numero_reloj, nombre) VALUES ('$numero_reloj', '$nombre')";
-                        if (mysqli_query($conn, $query)) {
-                            $_SESSION['message'] = "Preséntese en RH en 2 hrs con su gafete anterior para el cambio.";
-                        } else {
-                            echo "<script>alert('Error al guardar los datos: " . mysqli_error($conn) . "');</script>";
-                        }
-                    }
-                // Redirigir para evitar reenvío del formulario al recargar la página
-                    header("Location: " . $_SERVER['PHP_SELF']);
-                    exit;
+                    echo "<script>alert('Error al guardar los datos: " . mysqli_error($conn) . "');</script>";
                 }
-            }    
+            } elseif ($tipo === 'reposicion') {
+                $query = "INSERT INTO reposiciones (numero_reloj, nombre, pendiente) VALUES ('$numero_reloj', '$nombre', 1)";
+                if (mysqli_query($conn, $query)) {
+                    $_SESSION['message'] = "Preséntese en RH en 2 hrs con su gafete anterior para el cambio.";
+                } else {
+                    echo "<script>alert('Error al guardar los datos: " . mysqli_error($conn) . "');</script>";
+                }
+            }
+            
+            // Redirigir para evitar reenvío del formulario al recargar la página
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
         }
-        
+    }
+}
+
 // Mostrar mensajes almacenados en la sesión
 if (isset($_SESSION['message'])) {
     echo "<script>alert('" . $_SESSION['message'] . "');</script>";
@@ -128,16 +140,14 @@ if (isset($_SESSION['error'])) {
     unset($_SESSION['error']);
 }
 
-
-
 // Cerrar sesión
 if (isset($_POST['logout'])) {
     session_destroy();
     header("Location: index.php");
     exit;
 }
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -160,7 +170,7 @@ if (isset($_POST['logout'])) {
      
     
         .admin-button {
-            display: none; /* Ocultar botones de administración por defecto */
+            display: table-cell; /* Ocultar botones de administración por defecto */
         }
 
         table {
@@ -207,6 +217,7 @@ if (isset($_POST['logout'])) {
 
         .download-button:hover, .delete-button:hover {
             background-color: #f4d900;
+            color: black;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
@@ -307,6 +318,19 @@ if (isset($_POST['logout'])) {
                 }
             });
         });
+        function confirmarCambio(selectElement) {
+    if (selectElement.value == '0') { // Si el valor seleccionado es 'No'
+        var confirmar = confirm('¿Está seguro de que quiere cambiar este estatus a No? Esta acción no se puede deshacer.');
+        if (!confirmar) {
+            selectElement.value = '1'; // Revertir a 'Si' si no confirma
+        } else {
+            selectElement.form.submit(); // Enviar el formulario si confirma
+        }
+    } else {
+        selectElement.form.submit(); // Enviar el formulario si selecciona 'Si'
+    }
+}
+
     </script>
 </head>
 <body>
@@ -379,80 +403,111 @@ if (isset($_POST['logout'])) {
 </div>
             <?php if ($user && $user['position'] == 'A') : ?>
                 
+                <section>
 
             <h1>Extravíos de Gafete</h1>
             <table id="extraviosTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Número de Reloj</th>
-                        <th>Nombre</th>
-                        <th>Costo</th>
-                        <th>Fecha y Hora</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $query = "SELECT * FROM extravios";
-                    $result = mysqli_query($conn, $query);
+    <tr>
+        <th>ID</th>
+        <th>Número de Reloj</th>
+        <th>Nombre</th>
+        <th>Fecha y Hora</th>
+        <th>Costo</th>
+        <th>Pendiente</th>
+        <th class="admin-button">Acciones</th>
+    </tr>
+    <?php
+    $query = "SELECT * FROM extravios";
+    $result = mysqli_query($conn, $query);
 
-                    if ($result && mysqli_num_rows($result) > 0) {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<tr>
-                                    <td>{$row['id']}</td>
-                                    <td>{$row['numero_reloj']}</td>
-                                    <td>{$row['nombre']}</td>
-                                    <td>{$row['costo']}</td>
-                                    <td>{$row['fecha_hora']}</td>
-                                    <td><button class='envio'  onclick=\"confirmarBorradoFila('extravios', {$row['id']})\">Borrar</button></td>
-                                  </tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='5'>No hay datos disponibles</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo "<tr>";
+            echo "<td>" . $row['id'] . "</td>";
+            echo "<td>" . $row['numero_reloj'] . "</td>";
+            echo "<td>" . $row['nombre'] . "</td>";
+            echo "<td>" . $row['fecha_hora'] . "</td>";
+            echo "<td>" . $row['costo'] . "</td>";
+            echo '<td>
+                    <form method="POST" action="">
+                        <input type="hidden" name="id" value="' . $row['id'] . '">
+                        <input type="hidden" name="tabla" value="extravios">
+                         <select name="pendiente" onchange="confirmarCambio(this)">
+                             <option value="1"' . ($row['pendiente'] == 1 ? ' selected' : '') . '>Si</option>
+                             <option value="0"' . ($row['pendiente'] == 0 ? ' selected' : '') . '>No</option>
+                         </select>
+
+                        <input type="hidden" name="update_pendiente" value="1">
+                    </form>
+                  </td>';
+            echo '<td class="admin-button">
+
+                    <button class=envio onclick="confirmarBorradoFila(\'extravios\', ' . $row['id'] . ')">Borrar</button>
+                  </td>';
+            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='7'>No se encontraron registros.</td></tr>";
+    }
+    ?>
+</table>
+
             <button class="download-button" onclick="downloadExcel('extraviosTable', 'extravios_gafetes.xlsx')">Descargar como Excel</button>
             <button class="delete-button" onclick="confirmarBorrado('extravios')">Borrar Todos los Datos</button>
 
             <h1>Reposiciones de Gafete</h1>
-            <table id="reposicionesTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Número de Reloj</th>
-                        <th>Nombre</th>
-                        <th>Fecha y Hora</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $query = "SELECT * FROM reposiciones";
-                    $result = mysqli_query($conn, $query);
+<table id="reposicionesTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Número de Reloj</th>
+            <th>Nombre</th>
+            <th>Fecha y Hora</th>
+            <th>Pendiente</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $query = "SELECT * FROM reposiciones";
+        $result = mysqli_query($conn, $query);
 
-                    if ($result && mysqli_num_rows($result) > 0) {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<tr>
-                                    <td>{$row['id']}</td>
-                                    <td>{$row['numero_reloj']}</td>
-                                    <td>{$row['nombre']}</td>
-                                    <td>{$row['fecha_hora']}</td>
-                                    <td><button class='envio' onclick=\"confirmarBorradoFila('reposiciones', {$row['id']})\">Borrar</button></td>
-                                  </tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='4'>No hay datos disponibles</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-            <button class="download-button" onclick="downloadExcel('reposicionesTable', 'reposiciones_gafetes.xlsx')">Descargar como Excel</button>
-            <button class="delete-button" onclick="confirmarBorrado('reposiciones')">Borrar Todos los Datos</button>
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<tr>";
+                echo "<td>{$row['id']}</td>";
+                echo "<td>{$row['numero_reloj']}</td>";
+                echo "<td>{$row['nombre']}</td>";
+                echo "<td>{$row['fecha_hora']}</td>";
+                echo "<td>
+                        <form method='POST' action=''>
+                            <input type='hidden' name='id' value='{$row['id']}'>
+                            <input type='hidden' name='tabla' value='reposiciones'>
+                            <select name='pendiente' onchange='confirmarCambio(this)'>
+                                <option value='1'" . ($row['pendiente'] == 1 ? ' selected' : '') . ">Si</option>
+                                <option value='0'" . ($row['pendiente'] == 0 ? ' selected' : '') . ">No</option>
+                            </select>
+                            <input type='hidden' name='update_pendiente' value='1'>
+                        </form>
+                      </td>";
+                echo "<td>
+                        <button class='envio' onclick=\"confirmarBorradoFila('reposiciones', {$row['id']})\">Borrar</button>
+                      </td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='6'>No hay datos disponibles</td></tr>";
+        }
+        ?>
+    </tbody>
+</table>
+<button class="download-button" onclick="downloadExcel('reposicionesTable', 'reposiciones_gafetes.xlsx')">Descargar como Excel</button>
+<button class="delete-button" onclick="confirmarBorrado('reposiciones')">Borrar Todos los Datos</button>
+
         </div>
         <?php endif;?>
     </div>
+    </section>
+
 </body>
 </html>
