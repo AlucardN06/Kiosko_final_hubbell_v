@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 02, 2024 at 09:21 PM
+-- Generation Time: Aug 09, 2024 at 10:45 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -148,7 +148,8 @@ CREATE TABLE `extravios` (
   `numero_reloj` varchar(50) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `fecha_hora` timestamp NOT NULL DEFAULT current_timestamp(),
-  `costo` decimal(10,2) DEFAULT 40.00
+  `costo` decimal(10,2) DEFAULT 40.00,
+  `pendiente` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -162,16 +163,17 @@ CREATE TABLE `extravios_sodexo` (
   `numero_reloj` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `fecha_hora` timestamp NOT NULL DEFAULT current_timestamp(),
-  `motivo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+  `motivo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `pendiente` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `extravios_sodexo`
 --
 
-INSERT INTO `extravios_sodexo` (`id`, `numero_reloj`, `nombre`, `fecha_hora`, `motivo`) VALUES
-(2, '118849', ' Diana Laura Berdeja Carrillo', '2024-07-26 23:43:22', 'Vencimiento'),
-(3, '128768', ' Maribel Sarahi Leyva Novella', '2024-08-01 20:10:54', 'Vencimiento');
+INSERT INTO `extravios_sodexo` (`id`, `numero_reloj`, `nombre`, `fecha_hora`, `motivo`, `pendiente`) VALUES
+(2, '118849', ' Diana Laura Berdeja Carrillo', '2024-07-26 23:43:22', 'Vencimiento', 1),
+(3, '128768', ' Maribel Sarahi Leyva Novella', '2024-08-01 20:10:54', 'Vencimiento', 1);
 
 -- --------------------------------------------------------
 
@@ -420,16 +422,17 @@ CREATE TABLE `reposiciones` (
   `id` int(11) NOT NULL,
   `numero_reloj` varchar(50) NOT NULL,
   `nombre` varchar(100) NOT NULL,
-  `fecha_hora` timestamp NOT NULL DEFAULT current_timestamp()
+  `fecha_hora` timestamp NOT NULL DEFAULT current_timestamp(),
+  `pendiente` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `reposiciones`
 --
 
-INSERT INTO `reposiciones` (`id`, `numero_reloj`, `nombre`, `fecha_hora`) VALUES
-(2, '118849', ' Diana Laura Berdeja Carrillo', '2024-07-26 23:43:10'),
-(3, '128768', ' Maribel Sarahi Leyva Novella', '2024-08-01 20:12:25');
+INSERT INTO `reposiciones` (`id`, `numero_reloj`, `nombre`, `fecha_hora`, `pendiente`) VALUES
+(2, '118849', ' Diana Laura Berdeja Carrillo', '2024-07-26 23:43:10', 1),
+(3, '128768', ' Maribel Sarahi Leyva Novella', '2024-08-01 20:12:25', 1);
 
 -- --------------------------------------------------------
 
@@ -442,7 +445,8 @@ CREATE TABLE `reposiciones_sodexo` (
   `numero_reloj` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `fecha_hora` timestamp NOT NULL DEFAULT current_timestamp(),
-  `motivo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+  `motivo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `pendiente` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
