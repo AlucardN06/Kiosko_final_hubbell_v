@@ -351,6 +351,7 @@ button.user-button:hover {
         justify-content: center; /* Centrado horizontal */
         align-items: center; /* Centrado vertical */
         height: 80%; /* Ocupa todo el alto de right-section */
+        background-color: #000000; 
     }
 }
 

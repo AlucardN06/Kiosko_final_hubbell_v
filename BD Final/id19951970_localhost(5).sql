@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 09, 2024 at 10:45 PM
+-- Generation Time: Aug 15, 2024 at 08:24 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -61,6 +61,24 @@ CREATE TABLE `approvals` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `checador_practicantes`
+--
+
+CREATE TABLE `checador_practicantes` (
+  `id` int(11) NOT NULL,
+  `numero_reloj` varchar(50) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `apellidos` varchar(100) NOT NULL,
+  `supervisor` varchar(100) NOT NULL,
+  `escuela` varchar(100) NOT NULL,
+  `fecha` date NOT NULL,
+  `hora_entrada` time DEFAULT NULL,
+  `hora_salida` time DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `citas`
 --
 
@@ -94,7 +112,8 @@ CREATE TABLE `citas_cupos` (
 
 INSERT INTO `citas_cupos` (`id`, `fecha`, `cupos`, `razon`) VALUES
 (3, '2024-07-27', 7, 'Donacion de sangre'),
-(4, '2024-08-05', 19, 'Chequeo de Hipertension');
+(4, '2024-08-05', 19, 'Chequeo de Hipertension'),
+(5, '2024-08-22', 19, 'Donacion de sangre');
 
 -- --------------------------------------------------------
 
@@ -303,6 +322,23 @@ INSERT INTO `pdfs` (`id`, `file_name`, `file_path`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `practicantes`
+--
+
+CREATE TABLE `practicantes` (
+  `id` int(11) NOT NULL,
+  `firstname` varchar(255) NOT NULL,
+  `lastname` varchar(255) NOT NULL,
+  `fecha_ingreso` date NOT NULL,
+  `requisitor` varchar(255) NOT NULL,
+  `escuela` varchar(255) NOT NULL,
+  `reloj_number` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `questions`
 --
 
@@ -410,7 +446,8 @@ INSERT INTO `registro_citas` (`id`, `firstname`, `lastname`, `username`, `area`,
 (5, ' Manuel Eduardo', 'Romero Meza', '97106', 'Asistente De RH', '1', 'Maribel Duran Navarro', 'HUS', '2024-07-27', 'Donacion de sangre'),
 (6, 'Mirian Yesenia ', 'Cabrera', '548', 'Directora de RH', '1', '', '', '2024-07-27', 'Donacion de sangre'),
 (7, ' Maribel Sarahi', 'Leyva Novella', '128768', 'Operador General', '1', 'Fabiola Ramon', 'HUS', '2024-07-27', 'Donacion de sangre'),
-(8, ' Maribel Sarahi', 'Leyva Novella', '128768', 'Operador General', '1', 'Fabiola Ramon', 'HUS', '2024-08-05', 'Chequeo de Hipertension');
+(8, ' Maribel Sarahi', 'Leyva Novella', '128768', 'Operador General', '1', 'Fabiola Ramon', 'HUS', '2024-08-05', 'Chequeo de Hipertension'),
+(9, ' Diana Laura', 'Berdeja Carrillo', '118849', 'Asistente De RH', '1', 'Maribel Duran', 'HUS', '2024-08-22', 'Donacion de sangre');
 
 -- --------------------------------------------------------
 
@@ -3259,6 +3296,13 @@ ALTER TABLE `approvals`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `checador_practicantes`
+--
+ALTER TABLE `checador_practicantes`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `numero_reloj` (`numero_reloj`,`fecha`);
+
+--
 -- Indexes for table `citas`
 --
 ALTER TABLE `citas`
@@ -3323,6 +3367,12 @@ ALTER TABLE `options`
 -- Indexes for table `pdfs`
 --
 ALTER TABLE `pdfs`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `practicantes`
+--
+ALTER TABLE `practicantes`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -3428,6 +3478,12 @@ ALTER TABLE `approvals`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=173;
 
 --
+-- AUTO_INCREMENT for table `checador_practicantes`
+--
+ALTER TABLE `checador_practicantes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `citas`
 --
 ALTER TABLE `citas`
@@ -3437,7 +3493,7 @@ ALTER TABLE `citas`
 -- AUTO_INCREMENT for table `citas_cupos`
 --
 ALTER TABLE `citas_cupos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `employees`
@@ -3494,6 +3550,12 @@ ALTER TABLE `pdfs`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
+-- AUTO_INCREMENT for table `practicantes`
+--
+ALTER TABLE `practicantes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
@@ -3509,7 +3571,7 @@ ALTER TABLE `recomendaciones`
 -- AUTO_INCREMENT for table `registro_citas`
 --
 ALTER TABLE `registro_citas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `reposiciones`

@@ -171,13 +171,26 @@ if (isset($_POST['logout'])) {
 
                     <div>Mas Orden</div>
                 </button>
-                <button onclick="location.href='construccion.php'">
-                <i class="fas fa-info-circle icon-large"></i>
+                
+                <?php if ($user['position'] == 'A'||$user['position'] == 'X') : ?>
+
+                <button onclick="location.href='admin_practicantes.php'">
+            
+                <i class="fa-solid fa-user-check icon-large"></i>
                 <br>
 
-                    <div>Informacion</div>
+                    <div>Registros de checadas</div>
                 </button>
-                
+                <?php endif?>
+                <?php if ($user['position'] == 'A'||$user['position'] == 'X') : ?>
+
+                    <button onclick="location.href='register_practicantes.php'">
+                        <i class="fas fa-user-plus icon-large"></i>
+                        <br>
+
+                      <div>Nuevos practicantes</div>
+                        </button>
+                <?php endif?>
                 <button onclick="location.href='cambiopas.php'">
                         <i class="fas fa-key icon-large"></i>
                        <br>

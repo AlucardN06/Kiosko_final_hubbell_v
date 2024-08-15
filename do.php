@@ -157,22 +157,9 @@ if (isset($_POST['logout'])) {
             <?php endif; ?>
         </div>
         <div class="right-section">
-        <h1 class="department-title">Desarrollo Organizacional</h1>
+        <h1 class="department-title">Practicantes</h1></h1>
 
-            <div class="button-container">
-
-                <div class="button-grid">
-               
-                <button onclick="location.href='construccion.php'">
-                        <i class="fas fa-id-badge icon-large"></i>
-                        <br>
-                        <div>Ejemplo</div>
-                    </button>
-                    <button onclick="location.href='construccion.php'">
-                        <i class="fas fa-credit-card icon-large"></i>
-                        <br>
-                        <div>ejemplo</div>
-                    </button>
+            
                 </div>
             
             </div>

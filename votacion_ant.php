@@ -32,21 +32,30 @@ if (isset($_SESSION['user_id'])) {
     if ($result && mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
         
-        // Calcular tiempo de trabajo en años y meses
-        $fecha_ingreso = new DateTime($user['fecha_ingreso']);
-        $fecha_actual = new DateTime();
-        $interval = $fecha_ingreso->diff($fecha_actual);
-        $tiempo_trabajo_anios = $interval->y;
-        $meses_trabajo = $interval->m;
+// Calcular tiempo de trabajo en años y meses
+$fecha_ingreso = new DateTime($user['fecha_ingreso']);
+$fecha_actual = new DateTime();
+$interval = $fecha_ingreso->diff($fecha_actual);
+$tiempo_trabajo_anios = $interval->y;
+$meses_trabajo = $interval->m;
 
-        // Calcular si en los meses restantes del año (hasta noviembre) alcanzará un año adicional
-        $meses_restantes = 12 - $fecha_actual->format('m'); // Considerando hasta noviembre
-        if ($meses_trabajo + $meses_restantes >= 12) {
-            $tiempo_trabajo_anios += 1;
+// Calcular si alcanzará un año adicional dentro del año actual
+$meses_restantes = 12 - $fecha_actual->format('m') + 0; // Incluyendo diciembre
+if ($meses_trabajo + $meses_restantes >= 12) {
+    $tiempo_trabajo_anios += 1;
+}
+
+// Calcular el próximo múltiplo de 5 años
+$proximo_anio_regalo = ceil($tiempo_trabajo_anios / 5) * 5;
+
+// Verificar si cumple o cumplirá un múltiplo de 5 años este año
+$cumple_anio_este_ano = ($tiempo_trabajo_anios % 5 == 0 && $meses_trabajo < 12) || ($proximo_anio_regalo == $tiempo_trabajo_anios);
+
+// Si el usuario ya ha cumplido un múltiplo de 5 años este año, mostrar las opciones
+if ($cumple_anio_este_ano) {
+
+            $proximo_anio_regalo = $tiempo_trabajo_anios;
         }
-
-        // Calcular el próximo múltiplo de 5 años
-        $proximo_anio_regalo = ceil($tiempo_trabajo_anios / 5) * 5;
     } else {
         die("Error al obtener datos del usuario");
     }
@@ -63,6 +72,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     $has_voted = true;
 }
 
+// Procesar voto si no ha votado aún
 if (isset($_POST['vote_ant']) && !$has_voted) {
     $opcion_id = intval($_POST['opcion_id']);
 
@@ -141,7 +151,7 @@ $has_options = $opciones_result && mysqli_num_rows($opciones_result) > 0;
             <br>
             <br>
             <h1>Votación</h1>
-            <?php if ($has_options) : ?>
+            <?php if ($has_options && ($tiempo_trabajo_anios == $proximo_anio_regalo || ($tiempo_trabajo_anios % 5 == 0 && $cumple_anio_este_ano))) : ?>
                 <?php if ($has_voted) : ?>
                     <p>Gracias por tu participación, ya has votado.</p>
                 <?php else : ?>

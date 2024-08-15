@@ -28,12 +28,13 @@ if (isset($_POST['submit'])) {
     $fecha_ingreso = mysqli_real_escape_string($conn, $_POST['fecha_ingreso']);
     $requisitor = mysqli_real_escape_string($conn, $_POST['requisitor']);
     $escuela = mysqli_real_escape_string($conn, $_POST['escuela']);
+    $reloj_number = mysqli_real_escape_string($conn, $_POST['reloj_number']);
 
     // Insertar nuevo practicante
-    $insertQuery = "INSERT INTO practicantes (firstname, lastname, fecha_ingreso, requisitor, escuela) VALUES ('$firstname', '$lastname', '$fecha_ingreso', '$requisitor', '$escuela')";
+    $insertQuery = "INSERT INTO practicantes (firstname, lastname, fecha_ingreso, requisitor, escuela, reloj_number) VALUES ('$firstname', '$lastname', '$fecha_ingreso', '$requisitor', '$escuela', '$reloj_number')";
 
     if (mysqli_query($conn, $insertQuery)) {
-        echo "<script>alert('Practicante registrado exitosamente');window.location.href = 'register_practicante.php';</script>";
+        echo "<script>alert('Practicante registrado exitosamente');window.location.href = 'register_practicantes.php';</script>";
     } else {
         echo "<script>alert('Error al registrar al practicante: " . mysqli_error($conn) . "');window.location.href = 'register_practicante.php';</script>";
     }
@@ -41,6 +42,7 @@ if (isset($_POST['submit'])) {
 
 mysqli_close($conn);
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -52,12 +54,13 @@ mysqli_close($conn);
 <body>
     <div class="container">
         <h2>Registro de Practicantes</h2>
-        <form id="register-form" class="register-form" action="register_practicante.php" method="POST">
+        <form id="register-form" class="register-form" action="register_practicantes.php" method="POST">
             <input type="text" id="firstname" name="firstname" placeholder="Nombres" required>
             <input type="text" id="lastname" name="lastname" placeholder="Apellidos" required>
             <p>Fecha de ingreso:<br><br><input type="date" id="fecha_ingreso" name="fecha_ingreso" required></p>
             <input type="text" id="requisitor" name="requisitor" placeholder="Requisitor" required>
             <input type="text" id="escuela" name="escuela" placeholder="Escuela" required>
+            <input type="text" id="reloj_number" name="reloj_number" placeholder="Número de Reloj" required>
 
             <button type="submit" name="submit">Registrar Practicante</button>
         </form>
@@ -71,7 +74,7 @@ mysqli_close($conn);
         </form>
 
         <br><br><br>
-        <button type="button" onclick="location.href='ta.php'" class="user-button">Regresar</button>
+        <button type="button" onclick="location.href='otros.php'" class="user-button">Regresar</button>
     </div>
 
     <script>
@@ -83,3 +86,4 @@ mysqli_close($conn);
     </script>
 </body>
 </html>
+

@@ -209,8 +209,8 @@ unset($_SESSION['form_processed']);
                     <td>
                         <form action="admin_votacion_ant.php" method="POST" enctype="multipart/form-data" style="display:inline-block;">
                             <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                            <input type="text" name="nombre" value="<?php echo $row['nombre']; ?>" required>
-                            <input type="file" name="imagen" required>
+                            <input type="text" name="nombre" value="<?php echo $row['nombre']; ?>" >
+                            <input type="file" name="imagen" >
                             <select name="anio" required>
                                 <?php for ($i = 5; $i <= 100; $i += 5): ?>
                                     <option value="<?php echo $i; ?>" <?php echo $row['anio'] == $i ? 'selected' : ''; ?>><?php echo $i; ?> años</option>

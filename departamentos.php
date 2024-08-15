@@ -20,6 +20,78 @@ if (!$conn) {
     die("Error de conexión: " . mysqli_connect_error());
 }
 
+// Obtener el ID del usuario de la sesión
+$userId = $_SESSION['user_id'];
+
+// Verificar la posición del usuario en la tabla `users`
+$query = "SELECT position FROM users WHERE id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$position = $row['position'];
+
+if ($position === 'A') {
+
+    // Función para contar los pendientes en una tabla
+    function contarPendientes($conn, $tabla) {
+        $query = "SELECT COUNT(*) as total FROM $tabla WHERE pendiente = 1";
+        $result = mysqli_query($conn, $query);
+        $row = mysqli_fetch_assoc($result);
+        return $row['total'];
+    }
+
+    // Contar pendientes en las tablas
+    $pendientesReposiciones = contarPendientes($conn, 'reposiciones');
+    $pendientesReposicionesSodexo = contarPendientes($conn, 'reposiciones_sodexo');
+    $pendientesExtravios = contarPendientes($conn, 'extravios');
+    $pendientesExtraviosSodexo = contarPendientes($conn, 'extravios_sodexo');
+
+    // Crear mensaje de notificación
+    $mensajePendientes = "";
+
+    if ($pendientesReposiciones > 0) {
+        $mensajePendientes .= "En reposiciones de gafetes hay $pendientesReposiciones pendientes. ";
+    }
+
+    if ($pendientesReposicionesSodexo > 0) {
+        $mensajePendientes .= "En reposiciones Sodexo hay $pendientesReposicionesSodexo pendientes. ";
+    }
+
+    if ($pendientesExtravios > 0) {
+        $mensajePendientes .= "En extravíos de gafetes hay $pendientesExtravios pendientes. ";
+    }
+
+    if ($pendientesExtraviosSodexo > 0) {
+        $mensajePendientes .= "En extravíos Sodexo hay $pendientesExtraviosSodexo pendientes. ";
+    }
+
+    // Mostrar el cuadro de notificación si hay pendientes
+    if (!empty($mensajePendientes)) {
+        echo "<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var modal = document.getElementById('myModal');
+                    var span = document.getElementsByClassName('close')[0];
+                    var modalMessage = document.getElementById('modal-message');
+
+                    modalMessage.innerHTML = '$mensajePendientes';
+                    modal.style.display = 'block';
+
+                    span.onclick = function() {
+                        modal.style.display = 'none';
+                    }
+
+                    window.onclick = function(event) {
+                        if (event.target == modal) {
+                            modal.style.display = 'none';
+                        }
+                    }
+                });
+              </script>";
+    }
+}
+
 // Obtener información del usuario si está en sesión
 $user = null;
 if (isset($_SESSION['user_id'])) {
@@ -113,6 +185,42 @@ if (isset($_POST['logout'])) {
     </script>
 
 <style>
+     .modal {
+        display: none; /* Oculto por defecto */
+        position: fixed; /* Fija la posición de la ventana modal */
+        z-index: 1000; /* Por encima de otros elementos */
+        left: 3%;
+        top: 0;
+        width: 120%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        text-align: center;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 38px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
         #orientation-alert {
             display: none; /* Oculto por defecto */
             position: fixed;
@@ -191,6 +299,13 @@ if (isset($_POST['logout'])) {
     <div id="orientation-alert">
         <div>Por favor, gire su dispositivo  para una mejor experiencia.</div>
     </div>
+        <!-- Ventana modal -->
+        <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modal-message"></p>
+        </div>
+    </div>
     <div class="container">
         <div class="left-section user-info">
             <div class="logo">
@@ -226,7 +341,7 @@ if (isset($_POST['logout'])) {
 <button onclick="location.href='votaciones_ant.php'">
    <i class="fas fa-gift icon-large"></i>
         <br>
-        <div>Regalos por antigüedad</div>
+        <div>Regalos por antigedad</div>
    </button>
    <?php endif?>
                     <button  onclick="location.href='TA.php'">

@@ -47,13 +47,12 @@ if (isset($_POST['submit'])) {
 <body>
   
     <div class="container">
-    <div class="logo">
-        <img src="images/Logo.webp" alt="Logo">
-    </div>
+        <div class="logo">
+            <img src="images/Logo.webp" alt="Logo">
+        </div>
         <h1>Bienvenido(a) a tu Kiosko Hubbell</h1>  
-      <p class="parr">Ingresa tu número de reloj y contraseña</p>
+        <p class="parr">Ingresa tu número de reloj y contraseña</p>
         <?php if (isset($error_msg)) { ?>
-         
             <p class="error-msg"><?php echo $error_msg; ?></p>
         <?php } ?>
         <form id="login-form" class="login-form" action="index.php" method="POST">
@@ -62,6 +61,9 @@ if (isset($_POST['submit'])) {
             <button type="submit" name="submit">Login</button>
         </form>
         <a class="forgot-password" onclick="showPasswordRecoveryAlert()">Olvidaste tu contraseña? Click aquí</a>
+        <div class="practicante-link">
+            <a class="forgot-password" href="checador.php">¿Eres practicante? Click aquí</a>
+        </div>
     </div>
     <div class="bottom-line"></div>
     <script>
