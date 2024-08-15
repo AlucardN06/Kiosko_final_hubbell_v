@@ -167,7 +167,7 @@ unset($_SESSION['form_processed']);
                 <p id="datetime"></p> <!-- Contenedor para la fecha y la hora -->
                 <div class="user-buttons">
                     <form>
-                        <button type="button" onclick="location.href='com.php'" class="user-button">Regresar</button>
+                        <button type="button" onclick="location.href='votaciones_ant.php'" class="user-button">Regresar</button>
                     </form>
                     <form action="index.php" method="POST">
                         <button type="submit" name="logout" class="user-button">Cerrar sesión</button>

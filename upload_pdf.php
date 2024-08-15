@@ -35,6 +35,6 @@ if (isset($_POST['upload_pdf'])) {
 mysqli_close($conn);
 
 // Redirigir de vuelta a la página principal
-header("Location: departamentos.php");
+header("Location: guias_TA.php");
 exit;
 ?>
