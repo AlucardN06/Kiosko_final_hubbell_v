@@ -110,14 +110,14 @@ if (isset($_POST['borrar_tabla'])) {
             if ($tipo === 'extravio') {
                 $query = "INSERT INTO extravios (numero_reloj, nombre, costo, pendiente) VALUES ('$numero_reloj', '$nombre', 40.00, 1)";
                 if (mysqli_query($conn, $query)) {
-                    $_SESSION['message'] = "Se descontará la siguiente cantidad por la reposición del gafete extraviado: $40 pesos. Preséntese en el área de RH en 2 hrs.";
+                    $_SESSION['message'] = "Se descontará la siguiente cantidad por la reposición del gafete extraviado: $40 pesos. Preséntese en el área de RH en 2 hrs. En caso de ser del 3er Turno  recoger el dia siguiente en su hora de entrada.";
                 } else {
                     echo "<script>alert('Error al guardar los datos: " . mysqli_error($conn) . "');</script>";
                 }
             } elseif ($tipo === 'reposicion') {
                 $query = "INSERT INTO reposiciones (numero_reloj, nombre, pendiente) VALUES ('$numero_reloj', '$nombre', 1)";
                 if (mysqli_query($conn, $query)) {
-                    $_SESSION['message'] = "Preséntese en RH en 2 hrs con su gafete anterior para el cambio.";
+                    $_SESSION['message'] = "Preséntese en RH en 2 hrs con su gafete anterior para el cambio.  En caso de ser del 3er Turno  recoger el dia siguiente en su hora de entrada.";
                 } else {
                     echo "<script>alert('Error al guardar los datos: " . mysqli_error($conn) . "');</script>";
                 }

@@ -112,14 +112,14 @@ if (isset($_POST['borrar_tabla'])) {
                     if ($tipo === 'extravio') {
                         $query = "INSERT INTO extravios_sodexo (numero_reloj, nombre, motivo, pendiente) VALUES ('$numero_reloj', '$nombre', 'Vencimiento', 1)";
                         if (mysqli_query($conn, $query)) {
-                            $_SESSION['message'] = "Preséntese en el área de RH en 15 dias para recoger su tarjeta sodexo.";
+                            $_SESSION['message'] = "Preséntese en el área de RH en 7 dias habiles para recoger su tarjeta sodexo.";
                         } else {
                             echo "<script>alert('Error al guardar los datos: " . mysqli_error($conn) . "');</script>";
                         }
                     } elseif ($tipo === 'reposicion') {
                         $query = "INSERT INTO reposiciones_sodexo (numero_reloj, nombre, motivo, pendiente) VALUES ('$numero_reloj', '$nombre', '$motivo', 1)";
                         if (mysqli_query($conn, $query)) {
-                            $_SESSION['message'] = "Preséntese en RH en 15 dias para recoger su tarjeta sodexo.";
+                            $_SESSION['message'] = "Preséntese en RH en 7 dias habiles para recoger su tarjeta sodexo.";
                         } else {
                             echo "<script>alert('Error al guardar los datos: " . mysqli_error($conn) . "');</script>";
                         }
